@@ -2,23 +2,23 @@
 
 ## 一、数据库
 
-### 1.1 MySQL
+### 1.1 [MySQL](./MySQL)
 
-### 1.2 Redis
+### 1.2 [Redis](./redis)
 
-### 1.3 ElasticSearch
+### 1.3 [ElasticSearch](./elasticsearch)
 
 ## 二、编程语言
 
 ### 2.1 编译语言
 
-#### （1）Java
+#### （1）[Java](./Java)
 
-#### （2）Golang
+#### （2）[Golang](./Go)
 
 ### 2.2 脚本语言
 
-#### （1）PHP
+#### （1）[PHP](./php)
 
 #### （2）shell
 
@@ -30,15 +30,15 @@
 
 ## 三、中间件
 
-### 3.1 消息队列
+### 3.1 [消息队列](./messageQueue)
 
 ## 四、云
 
-### 4.1 docker
+### 4.1 [docker](./docker)
 
-### 4.2 kubernetes
+### 4.2 [kubernetes](./kubernestes)
 
-## 五、计算机网络
+## 五、[计算机网络](./network)
 
 ![image-20221113165702872](.img/image-20221113165702872.png)
 
@@ -54,11 +54,15 @@
 
 ### 6.3 sed
 
-### 6.4 gitlab
+### 6.4 [gitlab](./gitlab&cicd)
 
 ## 七、数据统计
 
-### 7.1 Prometheus
+### 7.1 [Prometheus](./prometheus)
 
 ### 7.2 Grfana
+
+## 八、[分布式](./distributed)
+
+## 九、[数据结构&算法](./dataStructures&Algorithms)
 
