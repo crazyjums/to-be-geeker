@@ -2,7 +2,7 @@
 echo "DOCS PUSH BAT"
 
 echo "2. git pull"
-git pull
+git pull origin master
 
 echo "3. git add *"
 git add *
