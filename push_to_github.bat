@@ -12,7 +12,7 @@ git commit -m "%now%"
 echo "4. git commit -m "%now%""
  
 echo "5. git push"
-git push
+git push origin master
  
 echo "Batch execution complete!"
 pause
