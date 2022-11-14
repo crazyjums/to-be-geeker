@@ -13,8 +13,6 @@
 
 ### 1.2 [Redis](./redis)
 
-### 1.3 [ElasticSearch](./elasticsearch)
-
 ## 二、编程语言
 
 ### 2.1 编译语言
@@ -36,11 +34,8 @@
 #### （2）[Golang](./Go)
 
 1. [go引入三方包](./Go/go引入三方包.md)
-
 2. [go语言特征](./Go/go语言特征.md)
-
 3. [Go语言学习笔记.md](./Go/Go语言学习笔记.md)
-
 4. [GO语言中的闭包.md](./Go/GO语言中的闭包.md)
 
 ### 2.2 脚本语言
@@ -60,9 +55,21 @@
 
 ## 三、中间件
 
-### 3.1 [消息队列](./messageQueue)
+### 3.1 [消息队列](./middleware/messageQueue)
 
-## 四、云
+#### （1）kafka
+
+#### （2）ActiveMQ
+
+#### （3）RocketMQ
+
+#### （4）RabbitMQ
+
+### 3.2 全文检索
+
+#### （1）[ElasticSearch](./middleware/elasticsearch)
+
+## 四、云原生
 
 ### 4.1 [docker](./docker)
 
@@ -94,6 +101,8 @@
 ### 7.2 Grfana
 
 ## 八、[分布式](./distributed)
+
+1. [分布式事务如何保证数据的一致性](./distributed/分布式事务如何保证数据的一致性.md)
 
 ## 九、[数据结构&算法](./dataStructures&Algorithms)
 
