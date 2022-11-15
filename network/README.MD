@@ -6,4 +6,9 @@
 4. [美团二面：TCP 四次挥手，可以变成三次吗？](./美团二面：TCP 四次挥手，可以变成三次吗？.md) | [reference](https://mp.weixin.qq.com/s/JUt-N0VxF_lXACFr6WJN8w)
 5. [硬不硬你说了算！近 40 张图解被问千百遍的 TCP 三次握手和四次挥手面试题](./硬不硬你说了算！近 40 张图解被问千百遍的 TCP 三次握手和四次挥手面试题.md) | [reference](https://mp.weixin.qq.com/s/tH8RFmjrveOmgLvk9hmrkw)
 6. [告别 TCP！](./告别 TCP！.md) | [reference](https://mp.weixin.qq.com/s/3rM_RlwejkMFWm0GdwK6Hg)
+7. [TCPIP协议中的三次握手和四次挥手](./TCPIP%E5%8D%8F%E8%AE%AE%E4%B8%AD%E7%9A%84%E4%B8%89%E6%AC%A1%E6%8F%A1%E6%89%8B%E5%92%8C%E5%9B%9B%E6%AC%A1%E6%8C%A5%E6%89%8B.md)
+
+## OSI七层协议
+
+![image-20221113165702872](.img/image-20221113165702872.png)
 
