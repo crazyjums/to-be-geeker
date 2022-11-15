@@ -7,6 +7,8 @@
 5. [硬不硬你说了算！近 40 张图解被问千百遍的 TCP 三次握手和四次挥手面试题](./硬不硬你说了算！近 40 张图解被问千百遍的 TCP 三次握手和四次挥手面试题.md) | [reference](https://mp.weixin.qq.com/s/tH8RFmjrveOmgLvk9hmrkw)
 6. [告别 TCP！](./告别 TCP！.md) | [reference](https://mp.weixin.qq.com/s/3rM_RlwejkMFWm0GdwK6Hg)
 7. [TCPIP协议中的三次握手和四次挥手](./TCPIP%E5%8D%8F%E8%AE%AE%E4%B8%AD%E7%9A%84%E4%B8%89%E6%AC%A1%E6%8F%A1%E6%89%8B%E5%92%8C%E5%9B%9B%E6%AC%A1%E6%8C%A5%E6%89%8B.md)
+7. [字节一面：服务端挂了，客户端的 TCP 连接还在吗？](./字节一面：服务端挂了，客户端的 TCP 连接还在吗？.md) | [reference](https://mp.weixin.qq.com/s?__biz=MzUxODAzNDg4NQ==&mid=2247520003&idx=1&sn=3e70c6b54007ffa3130c5956df232bdb&chksm=f98dcba9cefa42bfbf35fd5f867314d8c96c54f5b285db542be42fc0594706d1429eaa069165&scene=21#wechat_redirect)
+7. [拔掉网线后， 原本的 TCP 连接还存在吗？](./拔掉网线后， 原本的 TCP 连接还存在吗？.md)  | [reference](https://mp.weixin.qq.com/s?__biz=MzUxODAzNDg4NQ==&mid=2247504270&idx=1&sn=bce7d1e81a33c214ed210d12ee3a6b68&scene=21#wechat_redirect)
 
 ## OSI七层协议
 
