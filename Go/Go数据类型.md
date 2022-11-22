@@ -33,7 +33,7 @@ float64的底层存储如下：
 - 指数位：11位
 - 尾数位：52位
 
-### **字符串和各种int类型之间的相互转换方式**
+### （2）**字符串和各种int类型之间的相互转换方式**
 
 - string转成int
 
@@ -77,31 +77,35 @@ float64的底层存储如下：
   string := strconv.FormatUint(uint64, 16)
   ```
 
-### FAQ
+### （3）FAQ
 
-```go
-var a = 100
-```
+> ```go
+> var a = 100
+> ```
+>
+> 问：上面代码中，变量`a`属于什么数据类型？是`int`、`int8`、`int16`、`int32`还是`int64`？
+>
+> 答：变量`a`默认是`int`数据类型。
 
-上面代码中，变量`a`属于什么数据类型？是`int`、`int8`、`int16`、`int32`还是`int64`？
+> 问：如何查看变量作占用的字节数？
+>
+> 答：
+>
+> ```go
+> import "unsafe"
+> 
+> func main () {
+>     bytesOfVariable := unsafe.Sizeof(variable)
+> }
+> ```
 
-答：变量`a`默认是`int`数据类型。
-
-如何查看变量作占用的字节数？
-
-答：
-
-```go
-import "unsafe"
-
-func main () {
-    bytesOfVariable := unsafe.Sizeof(variable)
-}
-```
-
-
-
-
+> ```go
+> var a = 1.1
+> ```
+>
+> 问：上面的代码中，变量`a`是什么数据类型？
+>
+> 答：go语言中，上面的代码，变量`a`默认是`float64`数据类型的
 
 ## Reference
 
