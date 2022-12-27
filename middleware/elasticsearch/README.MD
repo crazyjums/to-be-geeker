@@ -16,9 +16,9 @@ docker pull elasticsearch:7.17.7
 docker run -p 9200:9200 -p 9300:9300 -e "discovery.type=single-node" elasticsearch:7.17.7
 ```
 
-启动完成之后，在浏览器输入：http://localhost:9200，如果看到以下信息，表示成功。
+启动完成之后，在浏览器输入：[http://localhost:9200](http://localhost:9200)，如果看到以下信息，表示成功。
 
-或者用postman向http://localhost:9200地址发送GET请求，也能得到如下结果。
+或者用postman向[http://localhost:9200](http://localhost:9200)地址发送GET请求，也能得到如下结果。
 
 ```json
 {
