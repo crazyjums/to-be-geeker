@@ -78,5 +78,24 @@ I'm terrified, man. I'm terrified that the LA is changing me **that I'm** becomi
 
 我很害怕，朋友，我很害怕，洛杉矶正在改变我，我正在变成那些追逐钱、追逐财富的人中的一员
 
-**When I say that **people get angry, they get defensive. It's like "What's wrong with being rich?", "What's wrong with being a billionaire?", "What's wrong with being financially Savvy". It's just like, "Yo, man, If you own a billion of anything **that** **doesn't** make you **Savvy** that makes you a hoarder".
+**When I say that **people get angry, they get defensive. 
 
+当我这么说的时候，人们会变得生气，他们会变得具有防御性
+
+It's like "What's wrong with being rich?", "What's wrong with being a billionaire?", "What's wrong with being financially Savvy". 
+
+这就像是富有有什么错？称为亿万富翁有什么错？成为精通财务的人有什么错？
+
+It's just like, "Yo, man, If you own a billion of anything **that** **doesn't** make you **Savvy** that makes you a hoarder".
+
+就像，哟，朋友，如果你拥有十亿的钱，这不会让你变得精明，但是会让你变成一个囤积者。
+
+> first chance:
+>
+> Like there is  just like "man, this guy is savvy.". What's a huge on open mile he is, I hope you write a book. People get angry man, they get defensive, **there is** like **a thousands of to be rich,** thousands of to be rich, I just want to be **a generational wealth**, I just want to be a generational wealth. It's just like, "Yo, man, Why would you do that to your kids", like no one's favorite kids' school was badly worthly in the third. Like no one has **fun** memeries of kary money junior.
+
+fixed:
+
+**Like there's no episode of orders where they go into someone's house and see a billion pieces unopened mail that are just like,** man, this guy is savvy. **What a shrewd collector of unopened mail he is**, I hope **he** **writes** a book. People get angry man, they get defensive, **They're just like oh there's valid reasons to be rich, there's valid reasons to be rich**, I just want to be **rich to build **generational wealth, that's it. I just want to be **build **generational wealth and just like, "Yo, man, Why would you do that to your kids like no one's favorite **kid** at school was **Bentley Worthington III**". Like no one has **fun** memories of **Cadbury** money nuts junior.
+
+ 
