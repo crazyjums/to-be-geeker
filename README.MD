@@ -95,7 +95,9 @@
 
 ### 4.2 [kubernetes](./kubernestes)
 
-## 五、[计算机网络](./network)
+## 五、计算机基础
+
+### 5.1 [计算机网络](./network)
 
 1. [在浏览器地址栏输入一个URL后回车，背后会进行哪些技术步骤](./network/%E5%9C%A8%E6%B5%8F%E8%A7%88%E5%99%A8%E5%9C%B0%E5%9D%80%E6%A0%8F%E8%BE%93%E5%85%A5%E4%B8%80%E4%B8%AAURL%E5%90%8E%E5%9B%9E%E8%BD%A6%EF%BC%8C%E8%83%8C%E5%90%8E%E4%BC%9A%E8%BF%9B%E8%A1%8C%E5%93%AA%E4%BA%9B%E6%8A%80%E6%9C%AF%E6%AD%A5%E9%AA%A4.md)
 2. [字节一面：TCP 三次握手，问的好细！](./network%2F%E5%AD%97%E8%8A%82%E4%B8%80%E9%9D%A2%EF%BC%9ATCP%20%E4%B8%89%E6%AC%A1%E6%8F%A1%E6%89%8B%EF%BC%8C%E9%97%AE%E7%9A%84%E5%A5%BD%E7%BB%86%EF%BC%81.md) | [reference](https://mp.weixin.qq.com/s?__biz=MzUxODAzNDg4NQ==&mid=2247521478&idx=1&sn=66528a27aa3556b40f4a0ad64a43045f&chksm=f98dd06ccefa597aed91d1cfc8234f0b65123c141e4b7f7246e387735b0594879a623f4e085e&scene=21&key=97d114acb76dd546d4ff231544e299e852b96658e939e38083d848d06ade5e704751d3da6f42009c3df15e2e92b1ca8c0e71293a0944a2d6a6f957a4f1ded6dcb4f3cba8cf744624f1189c6af2aa1daba528e11577b1a3d5d2e278951335e0283261c823d8580215a2e9605d3bbc3a72eee267e8284428251c7a8cd60234788c&ascene=7&uin=MTc4MzkyNDIyNA%3D%3D&devicetype=Windows+10+x64&version=63080014&lang=zh_CN&session_us=gh_fc46cf2353fc&exportkey=n_ChQIAhIQTrymq28Os5ptwK79m8qeuBLvAQIE97dBBAEAAAAAAO47KqUijqYAAAAOpnltbLcz9gKNyK89dVj02v34X1W0F4sQnjXWmBZZ0a4QBgA002NDVtNyLfYOXRsbYiX%2FBi7G1Uu0Oa8e1gIwvF5EIyHKMMfa9fsdyAfIPJ43cTamfxW0l49XkkUPLcx23BghHYTSnq5i3tOUEka%2Bdr888ENXZi9DfEgE23SmONthJAToElFbRtfrZQEcog2ZAaSWC0B9bkZ%2BczfNxHxmolmAhL9CEnSg03KlxziNrXpCs8gmHAclxa18lZCuwIGKCwSR1Fu18KVzBmGMJcY%2FuOmatB40OKOr&acctmode=0&pass_ticket=yOpJo0zYyJqrfgC4VkReOlPqL01cwvktXKCQYX35jC%2BGDXUbRhJFE5c7yOXcKxIz&wx_header=0&fontgear=2)
@@ -107,19 +109,19 @@
 8. [字节一面：服务端挂了，客户端的 TCP 连接还在吗？](./network%2F%E5%AD%97%E8%8A%82%E4%B8%80%E9%9D%A2%EF%BC%9A%E6%9C%8D%E5%8A%A1%E7%AB%AF%E6%8C%82%E4%BA%86%EF%BC%8C%E5%AE%A2%E6%88%B7%E7%AB%AF%E7%9A%84%20TCP%20%E8%BF%9E%E6%8E%A5%E8%BF%98%E5%9C%A8%E5%90%97%EF%BC%9F.md) | [reference](https://mp.weixin.qq.com/s?__biz=MzUxODAzNDg4NQ==&mid=2247520003&idx=1&sn=3e70c6b54007ffa3130c5956df232bdb&chksm=f98dcba9cefa42bfbf35fd5f867314d8c96c54f5b285db542be42fc0594706d1429eaa069165&scene=21#wechat_redirect)
 9. [拔掉网线后， 原本的 TCP 连接还存在吗？](./network%2F%E6%8B%94%E6%8E%89%E7%BD%91%E7%BA%BF%E5%90%8E%EF%BC%8C%20%E5%8E%9F%E6%9C%AC%E7%9A%84%20TCP%20%E8%BF%9E%E6%8E%A5%E8%BF%98%E5%AD%98%E5%9C%A8%E5%90%97%EF%BC%9F.md)  | [reference](https://mp.weixin.qq.com/s?__biz=MzUxODAzNDg4NQ==&mid=2247504270&idx=1&sn=bce7d1e81a33c214ed210d12ee3a6b68&scene=21#wechat_redirect)
 
-#### 5.1 七层协议
+#### 5.1.1 七层协议
 
-#### 5.2 五层协议
+#### 5.1.2 五层协议
 
-## 六、Linux
+### 5.2 Linux
 
-### 6.1 ansible
+#### 6.1 ansible
 
-### 6.2 awk
+#### 6.2 awk
 
-### 6.3 sed
+#### 6.3 sed
 
-### 6.4 [gitlab](./gitlab&cicd)
+#### 6.4 [gitlab](./gitlab&cicd)
 
 ## 七、数据统计
 
