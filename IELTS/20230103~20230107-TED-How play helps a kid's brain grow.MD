@@ -86,4 +86,6 @@ And **it's exacerbated** by two forces I see **impacting **the large majority of
 
 我看到影响，绝大多数家长和老师的两种力量加剧了这种情况。首先，需要立即满足和快速见效，其次，我们自己对游戏感到不适。要么是因为我们没时间和精力，要么是我们不再知道如何玩了。
 
- 
+>  first chance:
+>
+> On the topic of the immediate gratification, I think back that the excel document I created as the first-year teacher. That document was the manifistation of my indieasety, because often when we fell anxious or out of control, we revert back to what we can control. Foir parents and teachers, we often revert to fast-based teaching, because we see played-based midea result that ferm our efforts  .
