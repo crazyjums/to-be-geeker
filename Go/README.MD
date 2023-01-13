@@ -4,6 +4,38 @@
 
 ### 1 字符串相关
 
+### （1）字符串基础
+
+##### 1）基本使用
+
+参考：[http://c.biancheng.net/view/17.html](http://c.biancheng.net/view/17.html)
+
+##### 2）计算字符串长度
+
+go语言中，字符串都是基于UTF-8编码的，所以在go语言中不存在乱码的情况，但是，在统计字符串长度时，需要注意，如果字符串中含有中文，且我们的预期也是一个中文算一个字符的话，那么不能好用`len()`计算长度，应该用`utf8.RuneCountInString()`计算。
+
+```go
+package main
+
+import "fmt"
+
+func main() {
+    //---计算字符串的长度---
+	//ASCII 字符串长度使用 len() 函数。
+	//Unicode 字符串长度使用 utf8.RuneCountInString() 函数。
+	str1 := "I am a man;"
+	str2 := "很好aa"
+	//len() 函数的返回值的类型为 int，表示字符串的 ASCII 字符个数或字节长度
+	//如果字符串中有中文，返回的结果可能会不是我们想要的结果
+	//因为在go中，字符串都是用utf8编码，一个中文字占3个字符
+	fmt.Println(len(str1), len(str2)) //11 6
+	//utf8.RuneCountInString会将字符串中的中文当成一个"字符"来统计
+	fmt.Println(utf8.RuneCountInString(str1), utf8.RuneCountInString(str2)) //11 2
+}
+```
+
+
+
 ### 2 数组相关
 
 ### 3 切片相关
@@ -109,6 +141,10 @@
 
 
 
+
+## Reference
+
+1. [《**Go语言底层原理剖析(博文视点出品)**》](https://item.jd.com/13398708.html)
 
 1. [go引入三方包](./go引入三方包.md)
 2. [go语言特征](./go语言特征.md)
