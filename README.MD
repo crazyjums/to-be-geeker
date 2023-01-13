@@ -1,32 +1,14 @@
 # 程序员成为极客之路
 
-## 一、数据库
-
-### 1.1 [MySQL](./MySQL)
-
-1. [MySQL查询原理](./MySQL/MySQL查询原理.md)
-2. [MySQL索引原理](./MySQL/MySQL索引原理.md)
-3. [MySQL修改大数据表结构时的风险与解决办法](./MySQL/MySQL修改大数据表结构时的风险与解决办法.md)
-4. [MySQL中truncate和delete删除数据的区别](./MySQL/MySQL中truncate和delete删除数据的区别.md)
-5. [MySQL最左匹配原则](./MySQL/MySQL最左匹配原则.md)
-6. [update table set a = a+ 1 where id = 1是否存在线程安全问题](./MySQL/update%20table%20set%20a%20%3D%20a%2B%201%20where%20id%20%3D%201是否存在线程安全问题.md)
-7. [MySQL 是怎么加行级锁的？](.%2FMySQL%2FMySQL%20%E6%98%AF%E6%80%8E%E4%B9%88%E5%8A%A0%E8%A1%8C%E7%BA%A7%E9%94%81%E7%9A%84%EF%BC%9F.md)（为什么使用`select * form table ... for update`d的查询条件不走索引会所全表） | [reference](https://mp.weixin.qq.com/s/Ef73pSWb_k6yiTTlNCrEjg)
-8. [mysql幻读](./MySQL/mysql幻.md) |[reference](https://mp.weixin.qq.com/s?__biz=MzUxODAzNDg4NQ==&mid=2247520893&idx=1&sn=7152fa58a1d03b48cfe8ef00e90aa2ea&chksm=f98dd6d7cefa5fc13877a1c99dcb06d03f51cbbc9afee75d0cd87f4847566746fcced9948e54&scene=21#wechat_redirect)
-9. [美团二面：考我幻读，结果答的不好](./MySQL/美团二面：考我幻读，结果答的不好) | [reference](https://mp.weixin.qq.com/s?__biz=MzUxODAzNDg4NQ==&mid=2247520075&idx=1&sn=3119bcb4f3c2dde7dfa2070f26816eed&chksm=f98dcbe1cefa42f76d1d944898ad1ed12ac645aa41fbc03405e33970eb62e3b2b73ca1de858b&scene=21&key=c7cacdfa2c0e8a2c8da558ec2d4f4c79055bb9a8a62280d247de763ce7b864c9141393abfb9d7cc5ded9736d73010add6e9c83f4c2c74569e4b9ad36167a95262550cbab43fdeb1174caad38681430a9eca4fb6fc4e4efff7d3ccd15f650461c0181486f9c3e2533da80b041c2f1a5ad19e2489f8c0483d8fa64d8f0d28badb4&ascene=1&uin=MTc4MzkyNDIyNA%3D%3D&devicetype=Windows+10+x64&version=63080014&lang=zh_CN&exportkey=n_ChQIAhIQ7eodp%2FOPONIwokDZhnlEkhLqAQIE97dBBAEAAAAAABYlOKHmNQMAAAAOpnltbLcz9gKNyK89dVj0ufWmzo0aqJHfq%2FBVxo5SoDoTNilgEfAiKknnjplGl44VKcqgbUtJNL0SyUcj5ezryDeqys%2B1%2FYkNmAa5XMbmZWU%2FV1cuZXb85xptMLhxoOufwJSXwiSj19SP%2Fn4Gs920AO7YJrfLMyiQ5W22MZcpk6WC0HA4hnW0nTH6a7gOyrifxm3IgkrPneeK0C2RuXHnJ5oIkx5GJ51ShOZq0ClNhtiNKKP9RfDHjj5HdD2rnCqWudC4RzHs5slZlCs2Gjlv9wWbsQ%3D%3D&acctmode=0&pass_ticket=yOpJo0zYyJqrfgC4VkReOlPqL01cwvktXKCQYX35jC88CGFdUDKJ9uP6KzbWur4x&wx_header=0&fontgear=2)
-
-### 1.2 [Redis](./redis)
-
-1. [如何用redis实现分布式锁](./redis/%E5%A6%82%E4%BD%95%E7%94%A8redis%E5%AE%9E%E7%8E%B0%E5%88%86%E5%B8%83%E5%BC%8F%E9%94%81.md)
-
-## 二、编程语言
+## 一、编程语言
 
 ### 2.1 编译语言
 
-#### （1）[Java](./Java)
+#### 1 [Java](./Java)
 
-##### 1）三方网址
+##### （1）三方网址
 
-##### 2）博客
+##### （2）博客
 
 1. [idea集成Docker实现SpringBoot微服务镜像打包一键部署](.%2FJava%2Fidea%E9%9B%86%E6%88%90Docker%E5%AE%9E%E7%8E%B0SpringBoot%E5%BE%AE%E6%9C%8D%E5%8A%A1%E9%95%9C%E5%83%8F%E6%89%93%E5%8C%85%E4%B8%80%E9%94%AE%E9%83%A8%E7%BD%B2.MD)
 2. [java垃圾回收机制](.%2FJava%2Fjava%E5%9E%83%E5%9C%BE%E5%9B%9E%E6%94%B6%E6%9C%BA%E5%88%B6.md)
@@ -40,9 +22,9 @@
 10. [springboot+mybatis读写分离](./Java/springboot+mybatis读写分离.md)
 11. [springBoot操作redis](./Java/springBoot操作redis.md)
 
-#### （2）[Golang](./Go)
+#### 2 [Golang](./Go)
 
-##### 1）三方网址
+##### （1）三方网址
 
 1. [GoLang技术栈](https://www.golang-tech-stack.com/)
 2. [Golang 入门到精通教程](https://geekr.dev/golang-tutorial)
@@ -50,7 +32,7 @@
 4. [《深入解析Go》](https://books.studygolang.com/go-internals/)
 5. [《Go 编程基础》|github](https://github.com/unknwon/go-fundamental-programming)
 
-##### 2）博客
+##### （2）博客
 
 1. [go引入三方包](./Go/go引入三方包.md)
 2. [go语言特征](./Go/go语言特征.md)
@@ -59,35 +41,29 @@
 
 ### 2.2 脚本语言
 
-#### （1）[PHP](./php)
+#### 1 [PHP](./php)
 
 1. [cgi、php-cgi、fast-cgi、php-fpm的优缺点以及区别？](./php/cgi、php-cgi、fast-cgi、php-fpm的优缺点以及区别？.md)
 2. [opcache工作原理](./php/opcache工作原理.md)
 3. [new self和new static的区别](./php/new%20self%E5%92%8Cnew%20static%E7%9A%84%E5%8C%BA%E5%88%AB.md)
 
-#### （2）shell
+#### 2 shell
 
-#### （3）python
+#### 3 python
 
-#### （4）lua
+#### 4 lua
 
-#### （5）JavaScript
+#### 5 JavaScript
 
 ## 三、中间件
 
 ### 3.1 [消息队列](./middleware/messageQueue)
 
-#### （1）kafka
-
-#### （2）ActiveMQ
-
-#### （3）RocketMQ
-
-#### （4）RabbitMQ
+#### 1 kafka
 
 ### 3.2 全文检索
 
-#### （1）[ElasticSearch](./middleware/elasticsearch)
+#### 1 [ElasticSearch](./middleware/elasticsearch)
 
 ## 四、云原生
 
@@ -113,31 +89,73 @@
 
 #### 5.1.2 五层协议
 
-### 5.2 Linux
+### 5.2 操作系统
 
-#### 6.1 ansible
+#### 1 内存管理
 
-#### 6.2 awk
+##### （1）虚拟内存
 
-#### 6.3 sed
+#### 2 进程与线程
 
-#### 6.4 [gitlab](./gitlab&cicd)
+##### （1）进程与线程基础
 
-## 七、数据统计
+##### （2）进程间通信
 
-### 7.1 [Prometheus](./prometheus)
+##### （3）多线程同步
 
-### 7.2 Grfana
+##### （4）死锁
 
-## 八、[分布式](./distributed)
+##### （5）悲观锁和乐观锁
+
+#### 3 调度算法
+
+##### （1）进程调度算法
+
+##### （2）页面置换算法
+
+##### （3）磁盘调度算法
+
+### 5.3 数据库
+
+#### 1 [MySQL](./MySQL)
+
+1. [MySQL查询原理](./MySQL/MySQL查询原理.md)
+2. [MySQL索引原理](./MySQL/MySQL索引原理.md)
+3. [MySQL修改大数据表结构时的风险与解决办法](./MySQL/MySQL修改大数据表结构时的风险与解决办法.md)
+4. [MySQL中truncate和delete删除数据的区别](./MySQL/MySQL中truncate和delete删除数据的区别.md)
+5. [MySQL最左匹配原则](./MySQL/MySQL最左匹配原则.md)
+6. [update table set a = a+ 1 where id = 1是否存在线程安全问题](./MySQL/update%20table%20set%20a%20%3D%20a%2B%201%20where%20id%20%3D%201是否存在线程安全问题.md)
+7. [MySQL 是怎么加行级锁的？](.%2FMySQL%2FMySQL%20%E6%98%AF%E6%80%8E%E4%B9%88%E5%8A%A0%E8%A1%8C%E7%BA%A7%E9%94%81%E7%9A%84%EF%BC%9F.md)（为什么使用`select * form table ... for update`d的查询条件不走索引会所全表） | [reference](https://mp.weixin.qq.com/s/Ef73pSWb_k6yiTTlNCrEjg)
+8. [mysql幻读](./MySQL/mysql幻.md) |[reference](https://mp.weixin.qq.com/s?__biz=MzUxODAzNDg4NQ==&mid=2247520893&idx=1&sn=7152fa58a1d03b48cfe8ef00e90aa2ea&chksm=f98dd6d7cefa5fc13877a1c99dcb06d03f51cbbc9afee75d0cd87f4847566746fcced9948e54&scene=21#wechat_redirect)
+9. [美团二面：考我幻读，结果答的不好](./MySQL/美团二面：考我幻读，结果答的不好) | [reference](https://mp.weixin.qq.com/s?__biz=MzUxODAzNDg4NQ==&mid=2247520075&idx=1&sn=3119bcb4f3c2dde7dfa2070f26816eed&chksm=f98dcbe1cefa42f76d1d944898ad1ed12ac645aa41fbc03405e33970eb62e3b2b73ca1de858b&scene=21&key=c7cacdfa2c0e8a2c8da558ec2d4f4c79055bb9a8a62280d247de763ce7b864c9141393abfb9d7cc5ded9736d73010add6e9c83f4c2c74569e4b9ad36167a95262550cbab43fdeb1174caad38681430a9eca4fb6fc4e4efff7d3ccd15f650461c0181486f9c3e2533da80b041c2f1a5ad19e2489f8c0483d8fa64d8f0d28badb4&ascene=1&uin=MTc4MzkyNDIyNA%3D%3D&devicetype=Windows+10+x64&version=63080014&lang=zh_CN&exportkey=n_ChQIAhIQ7eodp%2FOPONIwokDZhnlEkhLqAQIE97dBBAEAAAAAABYlOKHmNQMAAAAOpnltbLcz9gKNyK89dVj0ufWmzo0aqJHfq%2FBVxo5SoDoTNilgEfAiKknnjplGl44VKcqgbUtJNL0SyUcj5ezryDeqys%2B1%2FYkNmAa5XMbmZWU%2FV1cuZXb85xptMLhxoOufwJSXwiSj19SP%2Fn4Gs920AO7YJrfLMyiQ5W22MZcpk6WC0HA4hnW0nTH6a7gOyrifxm3IgkrPneeK0C2RuXHnJ5oIkx5GJ51ShOZq0ClNhtiNKKP9RfDHjj5HdD2rnCqWudC4RzHs5slZlCs2Gjlv9wWbsQ%3D%3D&acctmode=0&pass_ticket=yOpJo0zYyJqrfgC4VkReOlPqL01cwvktXKCQYX35jC88CGFdUDKJ9uP6KzbWur4x&wx_header=0&fontgear=2)
+
+#### 2 [Redis](./redis)
+
+1. [如何用redis实现分布式锁](./redis/%E5%A6%82%E4%BD%95%E7%94%A8redis%E5%AE%9E%E7%8E%B0%E5%88%86%E5%B8%83%E5%BC%8F%E9%94%81.md)
+
+### 5.4 Linux
+
+#### 1 查日志
+
+#### 2 awk | ansible | sed
+
+#### 3 搭建代码托管平台 | [gitlab](./gitlab&cicd)
+
+## 六、监控
+
+### 6.1 [Prometheus](./prometheus)
+
+### 6.2 Grfana
+
+## 七、[分布式](./distributed)
 
 1. [分布式事务如何保证数据的一致性](./distributed/分布式事务如何保证数据的一致性.md)
 2. [如何设计幂等](./distributed/如何设计幂等.md)
 3. [分布式的设计与实现](./distributed/分布式的设计与实现.md)
 
-## 九、[数据结构&算法](./dataStructures&Algorithms)
+## 八、[数据结构&算法](./dataStructures&Algorithms)
 
-### （一）、算法
+### 8.1 算法
 
 #### 1 动态规划
 
@@ -177,7 +195,7 @@
 
 ##### （10）希尔排序
 
-### （二）、数据结构
+### 8.2 数据结构
 
 #### 1 数组
 
