@@ -31,6 +31,7 @@
 3. [Golang标准库文档](https://studygolang.com/pkgdoc)
 4. [《深入解析Go》](https://books.studygolang.com/go-internals/)
 5. [《Go 编程基础》|github](https://github.com/unknwon/go-fundamental-programming)
+6. [《Go 语言设计与实现》](https://draveness.me/golang/)
 
 ##### （2）博客
 
