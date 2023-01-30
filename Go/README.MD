@@ -127,13 +127,174 @@ slice := make([]int, 10) //使用关键字 make 创建切片
 3. 切片中存储数组数据的数据结构在内存中是连续的
 4. 切片和数组不同，**数组的内存固定且连续，多数操作都会直接读写内存的特定位置**，切片是运行时才会确定内容的结构，所有操作还需要依赖 Go 语言的运行时状态
 
-##### 2）切片扩容
+#### （2）切片初始化
+
+切片有一下3种方式可以初始化：
+
+1. 通过下标的方式获得数组或者切片的一部分；
+2. 使用字面量初始化新的切片；
+3. 使用关键字 `make` 创建切片；
+
+##### 1）通过下标初始化
+
+使用下标创建切片是最原始也最接近汇编语言的方式，它是所有方法中最为底层的一种，编译器会将 `arr[0:3]` 或者 `slice[0:3]` 等语句转换成 `OpSliceMake` 操作。
+
+##### 2）通过字面量初始化
+
+使用字面量 `[]int{1, 2, 3}` 创建新的切片时，[`cmd/compile/internal/gc.slicelit`](https://draveness.me/golang/tree/cmd/compile/internal/gc.slicelit) 函数会在编译期间将它展开成如下所示的代码片段：
+
+```
+var vstat [3]int
+vstat[0] = 1
+vstat[1] = 2
+vstat[2] = 3
+var vauto *[3]int = new([3]int)
+*vauto = vstat
+slice := vauto[:]
+```
+
+1. 根据切片中的元素数量对底层数组的大小进行推断并创建一个数组；
+2. 将这些字面量元素存储到初始化的数组中；
+3. 创建一个同样指向 `[3]int` 类型的数组指针；
+4. 将静态存储区的数组 `vstat` 赋值给 `vauto` 指针所在的地址；
+5. 通过 `[:]` 操作获取一个底层使用 `vauto` 的切片；
+
+第 5 步中的 `[:]` 就是使用下标创建切片的方法，从这一点我们也能看出 `[:]` 操作是创建切片最底层的一种方法。
+
+##### 3）通过关键字`make`初始化
+
+```go
+slice := make([]int, 0, 5)//创建了一个长度为0，容量为5的切片
+```
+
+如果使用字面量的方式创建切片，大部分的工作都会在编译期间完成。但是当我们使用 `make` 关键字创建切片时，很多工作都需要运行时的参与；调用方必须向 `make` 函数传入切片的大小以及可选的容量，类型检查期间的 [`cmd/compile/internal/gc.typecheck1`](https://draveness.me/golang/tree/cmd/compile/internal/gc.typecheck1) 函数会校验入参：
+
+```go
+func typecheck1(n *Node, top int) (res *Node) {
+	switch n.Op {
+	...
+	case OMAKE:
+		args := n.List.Slice()
+
+		i := 1
+		switch t.Etype {
+		case TSLICE:
+			if i >= len(args) {
+				yyerror("missing len argument to make(%v)", t)
+				return n
+			}
+
+			l = args[i]
+			i++
+			var r *Node
+			if i < len(args) {
+				r = args[i]
+			}
+			...
+			if Isconst(l, CTINT) && r != nil && Isconst(r, CTINT) && l.Val().U.(*Mpint).Cmp(r.Val().U.(*Mpint)) > 0 {
+				yyerror("len larger than cap in make(%v)", t)
+				return n
+			}
+
+			n.Left = l
+			n.Right = r
+			n.Op = OMAKESLICE
+		}
+	...
+	}
+}
+```
+
+`make`会检查是否传入了切片的长度`len`，如果没有传入容量，则默认容量等于长度，即`len=cap`，如果传入了`cap`，则还会检查`len`是否大于`cap`。
+
+当切片发生逃逸或者非常大时，运行时需要 [`runtime.makeslice`](https://draveness.me/golang/tree/runtime.makeslice) 在堆上初始化切片，如果当前的切片不会发生逃逸并且切片非常小的时候，`make([]int, 3, 4)` 会被直接转换成如下所示的代码：
+
+```go
+var arr [4]int
+n := arr[:3]
+```
+
+上述代码会初始化数组并通过下标 `[:3]` 得到数组对应的切片，这两部分操作都会在编译阶段完成，编译器会在栈上或者静态存储区创建数组并将 `[:3]` 转换成上一节提到的 `OpSliceMake` 操作。
+
+编译期检查完参数之后，Go会在运行期创建切片，创建切片的运行时函数 [`runtime.makeslice`](https://draveness.me/golang/tree/runtime.makeslice)：
+
+```go
+func makeslice(et *_type, len, cap int) unsafe.Pointer {
+	mem, overflow := math.MulUintptr(et.size, uintptr(cap))
+	if overflow || mem > maxAlloc || len < 0 || len > cap {
+		mem, overflow := math.MulUintptr(et.size, uintptr(len))
+		if overflow || mem > maxAlloc || len < 0 {
+			panicmakeslicelen()
+		}
+		panicmakeslicecap()
+	}
+
+	return mallocgc(mem, et, true)
+}
+```
+
+上述函数的主要工作是计算切片占用的内存空间并在堆上申请一片连续的内存，它使用如下的方式计算占用的内存：
+
+> 内存空间=切片中元素大小×切片容量
+
+虽然编译期间可以检查出很多错误，但是在创建切片的过程中如果发生了以下错误会直接触发运行时错误并崩溃：
+
+1. 内存空间的大小发生了溢出；
+2. 申请的内存大于最大可分配的内存；
+3. 传入的长度小于 0 或者长度大于容量；
+
+#### （3）切片扩容
 
 1. 如果期望容量大于当前容量的两倍就会使用期望容量；
 2. 如果当前切片的长度小于 1024 就会将容量翻倍；
 3. 如果当前切片的长度大于 1024 就会每次增加 25% 的容量，直到新容量大于期望容量；
 
 ### 4 map相关
+
+> map简单易用，既能自动处理哈希碰撞，又能自动扩容或重新内存整理，避免读写性能的下降。
+
+#### （1）初始化
+
+##### 1）通过字面量初始化
+
+```go
+//通过字面量初始化
+strMap := map[string]string{
+    "name": "zs",
+    "age": "18",  // 注意最后一行的结尾也必须有逗号
+}
+```
+
+1. 当哈希表中的元素数量少于或者等于 25 个时，编译器会将字面量初始化的结构体转换成以下的代码，将所有的键值对一次加入到哈希表中：
+
+   ```go
+   strMap := make(map[string]string, 2)
+   strMap["name"] = "zs"
+   strMap["age"] = 18
+   ```
+
+2. 当哈希表中的元素数量超过25个，编译器会创建两个数组分别存储键和值，这些键值对会通过如下所示的 for 循环加入哈希：
+
+   ```go
+   hash := make(map[string]int, 26)
+   vstatk := []string{"1", "2", "3", ... ， "26"}
+   vstatv := []int{1, 2, 3, ... , 26}
+   for i := 0; i < len(vstak); i++ {
+       hash[vstatk[i]] = vstatv[i]
+   }
+   ```
+
+##### 2）通过make初始化
+
+`map`如果不是通过字面量初始化，则必须使用`make`初始化之后才能对其进行赋值，值为`nil`（未初始化的`map`的值为`nil`）的`map`是空的，且不能对其进行赋值。
+
+```go
+m := make(map[string]string) // 语法是 "map[key的类型]value的类型"
+m["key1"] = "value1"
+fmt.Println(m["key1"])
+```
+
+
 
 ### 5 函数相关
 
@@ -425,3 +586,4 @@ n.i: 煎鱼, n.j: 2
 5. [GO语言中的闭包.md](./GO语言中的闭包.md)
 6. [《Go 语言设计与实现》](https://draveness.me/golang/)
 7. [有点不安全却又一亮的 Go unsafe.Pointer](https://segmentfault.com/a/1190000017389782)
+8. [Go的50坑：新Golang开发者要注意的陷阱、技巧和常见错误](https://www.cnblogs.com/lizhewei/p/14309615.html)
