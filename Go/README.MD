@@ -252,6 +252,10 @@ func makeslice(et *_type, len, cap int) unsafe.Pointer {
 ### 4 map相关
 
 > map简单易用，既能自动处理哈希碰撞，又能自动扩容或重新内存整理，避免读写性能的下降。
+>
+> Go 语言使用**拉链法**来解决哈希碰撞的问题实现了哈希表，它的访问、写入和删除等操作都在编译期间转换成了运行时的函数或者方法。哈希在每一个桶中存储键对应哈希的前 8 位，当对哈希进行操作时，这些 `tophash` 就成为可以帮助哈希快速遍历桶中元素的缓存。
+>
+> 实现拉链法一般会使用数组加上链表，不过一些编程语言会在拉链法的哈希中引入红黑树以优化性能，拉链法会使用链表数组作为哈希底层的数据结构，我们可以将它看成可以扩展的二维数组。
 
 #### （1）初始化
 
@@ -283,6 +287,8 @@ strMap := map[string]string{
        hash[vstatk[i]] = vstatv[i]
    }
    ```
+   
+   为什么不是`key`和`value`放在一起，而是`key`放一起，`value`放一起，这样方便内存对齐，节省空间。
 
 ##### 2）通过make初始化
 
@@ -294,13 +300,129 @@ m["key1"] = "value1"
 fmt.Println(m["key1"])
 ```
 
+#### （2）map的扩容
 
+在桶里存储k/v的方式不是一个k/v一组, 而是k放一块，v放一块。
+
+这样的相对k/v相邻的好处是，**方便内存对齐**。比如`map[int64]int8`, v是`int8`,放一块就避免需要额外内存对齐。
+
+##### 1）map不能对其中的值取地址
+
+```go
+m0 := map[int]int{}
+_ = &m0[0]//这是不合法的
+```
+
+> 为什么map不能对其中的值取地址呢？
+>
+> 这是因为`map`内部有渐进式扩容，所以`map`的值地址不固定，取地址没有意义。也因此，对于值类型为`slice`和`struct`, 只有把他们各自当做整体去赋值操作才是安全的。
 
 ### 5 函数相关
 
 ### 6 defer相关
 
 ### 7 结构体相关
+
+#### （1）初始化
+
+##### 1）通过字面量初始化
+
+```go
+type Person struct {
+    name string
+    age int
+    address string
+}
+
+func main() {
+    var p1 Person
+    p1 = Person{"lisi", 30, "shanghai"}   //方式A
+    p2 := Person{address:"beijing", age:25, name:"wangwu"} //方式B
+    p3 := Person{address:"NewYork"} //方式C
+}
+```
+
+##### 2）通过var初始化
+
+在 Go 语言中当一个变量被声明的时候，系统会自动初始化它的默认值，比如 `int` 被初始化为 `0`，指针为 `nil`。
+`var` 声明同样也会为结构体类型的数据分配内存，所以才能像代码中那样，在声明了 `var s T` 之后就能直接给他的字段进行赋值。
+
+```go
+type T struct {
+	a, b int
+}
+
+func main() {
+    var s T
+	s.a = 5
+	s.b = 8
+}
+```
+
+##### 3）通过new初始化
+
+使用 `new` 函数给一个新的结构体变量分配内存，它返回指向已分配内存的指针：`var t *T = new(T)`。
+
+```go
+type struct1 struct {
+    i1 int
+    f1 float32
+    str string
+}
+
+func main() {
+    ms := new(struct1)
+    ms.i1 = 10
+    ms.f1 = 15.5
+    ms.str= "Chris"
+
+    fmt.Printf("The int is: %d\n", ms.i1)
+    fmt.Printf("The float is: %f\n", ms.f1)
+    fmt.Printf("The string is: %s\n", ms.str)
+    fmt.Println(ms)
+}
+```
+
+与面向对象语言相同，使用点操作符可以给字段赋值：`structname.fieldname = value`。
+同样的，使用点操作符可以获取结构体字段的值：`structname.fieldname`。
+
+##### 4）几种初始化方式之间的区别
+
+```go
+//第一种，在Go语言中，可以直接以 var 的方式声明结构体即可完成实例化
+var t T
+t.a = 1
+t.b = 2
+
+//第二种，使用 new() 实例化
+t := new(T)
+
+//第三种，使用字面量初始化
+t := T{a, b}
+t := &T{} //等效于 new(T)
+```
+
+使用 `var t T` 会给 t 分配内存，并零值化内存，但是这个时候的 t 的类型是 T，使用 new 关键字时 `t := new(T)`，变量 t 则是一个指向 T 的指针
+
+从内存布局上来看，我们就能看出这三种初始化方式的区别：
+
+1. 使用 var 声明：
+
+   ![img](.img/662236-20181201225943974-2115349940.png)
+
+2. 使用 new 初始化：
+
+   ![img](.img/662236-20181201225950276-588450964.png)
+
+3. 使用结构体字面量初始化：
+
+   ![img](.img/662236-20181201225954933-1300501204.png)
+
+#### （2）结构体的内存布局
+
+Go 语言中，结构体和它所包含的数据在内存中是以连续块的形式存在的，即使结构体中嵌套有其他的结构体，这在性能上带来了很大的优势。不像 Java 中的引用类型，一个对象和它里面包含的对象可能会在不同的内存空间中，这点和 Go 语言中的指针很像。
+
+可以通过`unsafe.OffSetof`获取结构体中的某个属性在内存中的偏移。
 
 ### 8 sync包
 
@@ -542,7 +664,7 @@ n.i: 煎鱼, n.j: 2
 
 ## 二、go build执行详解
 
-## 三、go软件包管理器
+## 三、go软件包管理器 | go mod
 
 ## 四、go编译器相关
 
@@ -587,3 +709,4 @@ n.i: 煎鱼, n.j: 2
 6. [《Go 语言设计与实现》](https://draveness.me/golang/)
 7. [有点不安全却又一亮的 Go unsafe.Pointer](https://segmentfault.com/a/1190000017389782)
 8. [Go的50坑：新Golang开发者要注意的陷阱、技巧和常见错误](https://www.cnblogs.com/lizhewei/p/14309615.html)
+9. [Go 结构体与初始化](https://www.cnblogs.com/liyutian/p/10050320.html)
