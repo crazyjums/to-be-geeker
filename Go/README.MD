@@ -249,6 +249,10 @@ func makeslice(et *_type, len, cap int) unsafe.Pointer {
 2. 如果当前切片的长度小于 1024 就会将容量翻倍；
 3. 如果当前切片的长度大于 1024 就会每次增加 25% 的容量，直到新容量大于期望容量；
 
+#### （4）如果判断2个切片是否相等
+
+
+
 ### 4 map相关
 
 > map简单易用，既能自动处理哈希碰撞，又能自动扩容或重新内存整理，避免读写性能的下降。
@@ -319,9 +323,63 @@ _ = &m0[0]//这是不合法的
 
 ### 5 函数相关
 
+go语言中，参数传递都是值传递，包括基本数据类型、数组、结构体、指针等。在给函数传参时需要注意，如果该参数是比较大的数组或结构体，建议传指针，因为值拷贝会影响性能。
+
+#### （1）方法
+
+在Go语言中，将函数绑定到具体的类型中，则称该函数是该类型的方法，其定义的方式是在func与函数名称之间加上具体类型变量，这个类型变量称为`方法接收器`，如：
+
+```go
+func setName(m Member,name string) {
+    //普通函数
+    m.Name = name
+}
+
+func (m Member)setName(name string) {
+    //绑定到Member结构体的方法
+    m.Name = name
+}
+
+func main() {
+    m := Member{}
+	m.setName("小明")
+	fmt.Println(m.Name)//输出为空 因为结构体是值传递
+}
+```
+
+```go
+func (m *Member)setName(name string){
+    //将Member改为*Member
+    m.Name = name
+}
+
+func main() {
+    m := Member{}
+	m.setName("小明")
+	fmt.Println(m.Name)//小明
+}
+```
+
+#### （2）为什么go的函数可以返回多个值
+
+因为Go使用栈传递入参和接收返回值，对于返回多个参数，Go只需要多分配一点栈空间即可。
+
+- C 语言的方式能够极大地减少函数调用的额外开销，但是也增加了实现的复杂度；
+  - CPU 访问栈的开销比访问寄存器高几十倍；
+  - 需要单独处理函数参数过多的情况；
+- Go 语言的方式能够降低实现的复杂度并支持多返回值，但是牺牲了函数调用的性能；
+  - 不需要考虑超过寄存器数量的参数应该如何传递；
+  - 不需要考虑不同架构上的寄存器差异；
+  - 函数入参和出参的内存空间需要在栈上进行分配；
+
 ### 6 defer相关
 
+- 多个 defer 语句，遵从后进先出(Last In First Out，LIFO)的原则，最后声明的 defer 语句，最先得到执行。
+- defer 在 return 语句之后执行，但在函数退出之前，defer 可以修改返回值。
+
 ### 7 结构体相关
+
+结构体是**复合类型**，并非**引用类型**，结构体和数组一样，都是**值传递**。在函数间传递结构体参数时，如果希望函数内对形参的改动同步到实参，则需要使用引用传递。
 
 #### （1）初始化
 
@@ -356,6 +414,15 @@ func main() {
     var s T
 	s.a = 5
 	s.b = 8
+    
+    //通过指针创建结构体，必须先对结构体变量进行初始化才能对其赋值
+    //指针类型为引用类型，声明结构体指针时，如果未初始化，则初始值为nil,只有初始化后，才能访问字段或为字段赋值。
+    //因为指针的零值是nil
+    var s *T
+    //s.a = 5 //panic: runtime error: invalid memory address or nil pointer dereference
+    s = &T{} //初始化
+    s.a = 5//正确
+	s.b = 8//正确
 }
 ```
 
@@ -423,6 +490,149 @@ t := &T{} //等效于 new(T)
 Go 语言中，结构体和它所包含的数据在内存中是以连续块的形式存在的，即使结构体中嵌套有其他的结构体，这在性能上带来了很大的优势。不像 Java 中的引用类型，一个对象和它里面包含的对象可能会在不同的内存空间中，这点和 Go 语言中的指针很像。
 
 可以通过`unsafe.OffSetof`获取结构体中的某个属性在内存中的偏移。
+
+#### （3）空 struct{} 的用途
+
+使用空结构体 struct{} 可以节省内存，一般作为占位符使用，表明这里并不需要一个值。
+
+```go
+fmt.Println(unsafe.Sizeof(struct{}{})) // 0
+```
+
+比如使用 map 表示集合时，只关注 key，value 可以使用 struct{} 作为占位符。如果使用其他类型作为占位符，例如 int，bool，不仅浪费了内存，而且容易引起歧义。
+
+```go
+type Set map[string]struct{}
+
+func main() {
+	set := make(Set)
+
+	for _, item := range []string{"A", "A", "B", "C"} {
+		set[item] = struct{}{}
+	}
+	fmt.Println(len(set)) // 3
+	if _, ok := set["A"]; ok {
+		fmt.Println("A exists") // A exists
+	}
+}
+```
+
+再比如，使用信道(channel)控制并发时，我们只是需要一个信号，但并不需要传递值，这个时候，也可以使用 struct{} 代替。
+
+```go
+func main() {
+	ch := make(chan struct{}, 1)
+	go func() {
+		<-ch
+		// do something
+	}()
+	ch <- struct{}{}
+	// ...
+}
+```
+
+再比如，声明只包含方法的结构体。
+
+```go
+type Lamp struct{}
+
+func (l Lamp) On() {
+        println("On")
+
+}
+func (l Lamp) Off() {
+        println("Off")
+}
+```
+
+一个结构体，并没有包含自身，比如`Stu`中的字段不能是`Stu`类型，但却可能是`*Stu`。
+
+```go
+type Stu struct {
+	Name string `json:"stu_name"`
+	ID   string `json:"stu_id"`
+	Age  int    `json:"-"`
+	Next *Stu   `json:"-"`
+}
+```
+
+#### （4）组合
+
+在Go语言中没有继承的概念，Go语言的编程哲学里，推荐使用`组合`的方式来达到代码复用效果。
+
+```
+
+type Person struct {
+	Name string
+	Age  int8
+}
+
+func (p *Person) setName(name string) {
+	p.Name = name
+}
+
+func (p *Person) setAge(age int8) {
+	p.Age = age
+}
+
+type Stu1 struct {
+	p Person
+}
+
+type Stu2 struct {
+	Person //匿名字段
+}
+
+func main() {
+	stu1 := Stu1{
+		Person{
+			Name: "tony",
+			Age:  19,
+		},
+	}
+	fmt.Println(stu1.p.Name)
+
+	stu2 := Stu2{
+		Person{
+			Name: "tony",
+			Age:  19,
+		},
+	}
+	//匿名字段可以省去中间的字段
+	fmt.Println(stu2.Name)
+}
+```
+
+### 8 接口相关
+
+Go 语言只会在传递参数、返回参数以及变量赋值时才会对某个类型是否实现接口进行检查
+
+#### （1）2 个 interface 可以比较吗？
+
+Go 语言中，interface 的内部实现包含了 2 个字段，类型 `T` 和 值 `V`，interface 可以使用 `==` 或 `!=` 比较。2 个 interface 相等有以下 2 种情况
+
+1. 两个 interface 均等于 nil（此时 V 和 T 都处于 unset 状态）
+2. 类型 T 相同，且对应的值 V 相等。
+
+看下面的例子：
+
+```go
+type Stu struct {
+	Name string
+}
+
+type StuInt interface{}
+
+func main() {
+	var stu1, stu2 StuInt = &Stu{"Tom"}, &Stu{"Tom"}
+	var stu3, stu4 StuInt = Stu{"Tom"}, Stu{"Tom"}
+	fmt.Println(stu1 == stu2) // false
+	fmt.Println(stu3 == stu4) // true
+}
+```
+
+`stu1` 和 `stu2` 对应的类型是 `*Stu`，值是 Stu 结构体的地址，两个地址不同，因此结果为 false。
+`stu3` 和 `stu4` 对应的类型是 `Stu`，值是 Stu 结构体，且各字段相等，因此结果为 true。
 
 ### 8 sync包
 
@@ -710,3 +920,4 @@ n.i: 煎鱼, n.j: 2
 7. [有点不安全却又一亮的 Go unsafe.Pointer](https://segmentfault.com/a/1190000017389782)
 8. [Go的50坑：新Golang开发者要注意的陷阱、技巧和常见错误](https://www.cnblogs.com/lizhewei/p/14309615.html)
 9. [Go 结构体与初始化](https://www.cnblogs.com/liyutian/p/10050320.html)
+10. [7天用Go从零实现Web框架Gee教程](https://geektutu.com/post/gee.html)
