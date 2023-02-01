@@ -64,8 +64,6 @@ for i := 0; i < 1000; i++ {
 fmt.Println(str.String())
 ```
 
-
-
 ### 2 数组相关
 
 #### （1）数组的特点：
@@ -633,6 +631,30 @@ func main() {
 
 `stu1` 和 `stu2` 对应的类型是 `*Stu`，值是 Stu 结构体的地址，两个地址不同，因此结果为 false。
 `stu3` 和 `stu4` 对应的类型是 `Stu`，值是 Stu 结构体，且各字段相等，因此结果为 true。
+
+**分析：**
+
+Go 语言根据接口类型是否包含一组方法将接口类型分成了两类：
+
+- 使用 [`runtime.iface`](https://draveness.me/golang/tree/runtime.iface) 结构体表示包含方法的接口
+
+  ```go
+  type eface struct { // 16 字节
+  	_type *_type
+  	data  unsafe.Pointer
+  }
+  ```
+
+- 使用 [`runtime.eface`](https://draveness.me/golang/tree/runtime.eface) 结构体表示不包含任何方法的 `interface{}` 类型；
+
+  ```go
+  type iface struct { // 16 字节
+  	tab  *itab
+  	data unsafe.Pointer
+  }
+  ```
+
+  
 
 ### 8 sync包
 
