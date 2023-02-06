@@ -639,18 +639,18 @@ Go 语言根据接口类型是否包含一组方法将接口类型分成了两�
 - 使用 [`runtime.iface`](https://draveness.me/golang/tree/runtime.iface) 结构体表示包含方法的接口
 
   ```go
-  type eface struct { // 16 字节
-  	_type *_type
-  	data  unsafe.Pointer
+  type iface struct { // 16 字节
+  	tab  *itab
+  	data unsafe.Pointer
   }
   ```
 
 - 使用 [`runtime.eface`](https://draveness.me/golang/tree/runtime.eface) 结构体表示不包含任何方法的 `interface{}` 类型；
 
   ```go
-  type iface struct { // 16 字节
-  	tab  *itab
-  	data unsafe.Pointer
+  type eface struct { // 16 字节
+  	_type *_type
+  	data  unsafe.Pointer
   }
   ```
 
