@@ -105,6 +105,8 @@ arr[i]//运行期才能检查出数组越界
 
 ### 3 切片相关
 
+切片在函数传参时是引用传递，数组在传参是值传递。
+
 #### （1）定义切片
 
 ```go
@@ -247,9 +249,7 @@ func makeslice(et *_type, len, cap int) unsafe.Pointer {
 2. 如果当前切片的长度小于 1024 就会将容量翻倍；
 3. 如果当前切片的长度大于 1024 就会每次增加 25% 的容量，直到新容量大于期望容量；
 
-#### （4）如果判断2个切片是否相等
-
-
+#### （4）如何判断2个切片是否相等
 
 ### 4 map相关
 
@@ -654,9 +654,121 @@ Go 语言根据接口类型是否包含一组方法将接口类型分成了两�
   }
   ```
 
-  
 
 ### 8 sync包
+
+Go语言中 sync 包里提供了互斥锁 Mutex 和读写锁 RWMutex 用于处理并发过程中可能出现同时两个或多个协程（或线程）读或写同一个变量的情况。
+
+#### （1）互斥锁-Mutex
+
+互斥锁在同一时刻，只能有一个go程能够拿到该锁，其他没有拿到锁的go程只能等待。
+
+##### 1）没有锁的情况
+
+```go
+func WithNoLock() {
+	var a = 0
+	for i := 0; i < ThreadNum; i++ {
+		go func(id int) {
+			a += 1
+			fmt.Println("i = ", id, ", a =", a)
+		}(i)
+	}
+	fmt.Println("a=", a)
+}
+```
+
+如果不对go程加锁，那么我们会发现，程序每次执行的结果都不一样。
+
+原因：因为a+=1这个动作在内存中，其实是由3个动作完成，且这3个动作不是原子的：
+
+- 从寄存器读取 a 的值；
+- 然后做加法运算；
+- 最后写到寄存器。
+
+##### 2）有互斥锁的情况
+
+```go
+func WithMutexLock() {
+	var a = 0
+	var lock sync.Mutex
+	for i := 0; i < 1000; i++ {
+		go func(id int) {
+			lock.Lock()
+			defer lock.Unlock()
+			a += 1
+			fmt.Println("i = ", id, ", a =", a)
+		}(i)
+	}
+	time.Sleep(time.Second)//等待一秒，主协程等待子协程都执行完了，在执行主协程的代码
+	fmt.Println("a=", a)
+}
+```
+
+加了锁之后，我们发现结果就对了。
+
+> 如果不加`time.Sleep(time.Second)`这句，我们会发现每次执行的结果也不一样，那是因为主协程不会等子协程都执行完才会执行，所以子协程还没执行完，主协程已经结束了。
+
+##### 3）子协程执行完再执行主协程-chan实现
+
+上面是主协程通过等待一秒让子协程都执行完，这是碰巧所有子协程都能在一秒内执行完，如果一秒执行不完这些子协程，那么上面那种方式就不行了，且大部分线上代码也不会用睡眠来等待子协程结束。
+
+通过通道可以拿到其中的目的，但是如果子协程太多，创建太多的通道会占用过多的内存，导致程序内存不足等情况的发生。
+
+```go
+func WithChanMutex() {
+	var a = 0
+	var lock sync.Mutex
+	var c = make(chan bool, ThreadNum) //需要开辟内存空间，如果线程较多，不利于程序性能
+	defer close(c)
+	for i := 0; i < ThreadNum; i++ {
+		go func(id int) {
+			lock.Lock()
+			defer lock.Unlock()
+			a += 1
+			fmt.Println("i = ", id, ", a =", a)
+			c <- true //往通道写数据
+		}(i)
+	}
+
+	for i := 0; i < ThreadNum; i++ {
+		<-c //读取通道的数据
+	}
+	fmt.Println("a=", a)
+}
+```
+
+##### 4）通过sync.WaitGroup实现
+
+`sync.WaitGroup`在底层维护了一个计数器，这个计数器是线程安全的，它有三个方法：`Add(), Done(), Wait()` 用来控制计数器的数量。`Add(n)` 把计数器设置为`n` ，`Done()` 每次把计数器`-1` ，`wait()` 会阻塞代码的运行，直到计数器地值减为0。
+
+```go
+func WithWaitGroupMutex() {
+	var a = 0
+	var lock sync.Mutex
+	var wg = sync.WaitGroup{}
+	wg.Add(ThreadNum)
+	for i := 0; i < ThreadNum; i++ {
+		go func(id int) {
+			lock.Lock()
+			defer lock.Unlock()
+			a += 1
+			fmt.Println("i = ", id, ", a =", a)
+			wg.Done()
+		}(i)
+	}
+	wg.Wait()
+	fmt.Println("a=", a)
+}
+```
+
+#### （2）读写锁
+
+- 当有一个 goroutine 获得写锁定，其它无论是读锁定还是写锁定都将阻塞直到写解锁；
+- 当有一个 goroutine 获得读锁定，其它读锁定仍然可以继续；
+- 当有一个或任意多个读锁定，写锁定将等待所有读锁定解锁之后才能够进行写锁定。（读写互斥）
+
+
 
 ### 9 sync.map原理
 
@@ -930,7 +1042,9 @@ import _ "fmt"
 
 #### （3）包导入后init的初始化顺序
 
+Go 语言包会从 main 包开始检查其引用的所有包，每个包也可能包含其他的包。Go 编译器由此构建出一个树状的包引用关系，再根据引用顺序决定编译顺序，依次编译这些包的代码。
 
+在运行时，被最后导入的包会最先初始化并调用 init() 函数。
 
 ## 二、go build执行详解
 
