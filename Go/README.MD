@@ -64,6 +64,10 @@ for i := 0; i < 1000; i++ {
 fmt.Println(str.String())
 ```
 
+#### （3）string转slice
+
+在`for-range`循环中，go做了一些优化，因为string是只读的，所以在将string转成byte或slice类型时，需要为slice或byte重新分配一次内存，这是比较消耗性能，但是在for-range循环中，将string转成slice可以不进行新的内存分配，而是直接使用 string的底层数据。
+
 ### 2 数组相关
 
 #### （1）数组的特点：
@@ -1057,7 +1061,65 @@ Go 语言包会从 main 包开始检查其引用的所有包，每个包也可�
 
 ## 二、go build执行详解
 
+go build -a可以让编译器将Go源文件（比如例子中的main.go）的所有直接和间接的依赖包（包括标准库）都重新编译一遍，并将最新的.a作为链接器的输入。
+
 ## 三、go软件包管理器 | go mod
+
+### 1 包导入
+
+Go编译速度快的原因具体体现在以下三方面：
+
+- Go要求每个源文件在开头处显式地列出所有依赖的包导入，这样Go编译器不必读取和处理整个文件就可以确定其依赖的包列表。
+- Go要求包之间不能存在循环依赖，这样一个包的依赖关系便形成了一张有向无环图。由于无环，包可以被单独编译，也可以并行编译。
+- 已编译的Go包对应的目标文件（file_name.o或package_name.a）中不仅记录了该包本身的导出符号信息，还记录了其所依赖包的导出符号信息。这样，Go编译器在编译某包P时，针对P依赖的每个包导入（比如导入包Q），只需读取一个目标文件即可（比如：Q包编译成的目标文件中已经包含Q包的依赖包的导出信息），而无须再读取其他文件中的信息。
+
+包的源码基础搜索路径有三种模式：
+
+- 所有包（无论是标准库包还是第三方包）的源码基础搜索路径都包括$GOROOT/src（Go 1.11版本之前）
+-  经典gopath模式下（GO111MODULE=off）：$GOPATH/src。
+- module-aware模式下（GO111MODULE=on）：$GOPATH/pkg/mod。
+- auto模式下（GO111MODULE=auto）：在$GOPATH/src路径下，与gopath模式相同；在$GOPATH/src路径外且包含go.mod，与module-aware模式相同。
+
+Go 1.13版本，包的源码基础搜索路径有两种模式： 
+
+- 经典gopath模式下（GO111MODULE=off）：$GOPATH/src。
+- module-aware模式下（GO111MODULE=on/auto）：$GOPATH/pkg/mod。未来的Go版本将只有module-aware模式，即只在module缓存的目录下搜索包的源码
+
+在使用第三方包的时候，在第三方包源码存在且对应的.a已安装的情况下，编译器链接的仍是根据第三方包最新源码编译出的.a文件，而不是之前已经安装到$GOPATH/pkg/darwin_amd64下的目标文件。但是，默认情况下**对于标准库中的包**，编译器直接链接的是$GOROOT/pkg/darwin_amd64下的.a文件。
+
+> 源文件头部的包导入语句import后面的部分就是一个路径，路径的最后一个分段也不是包名，**包导入路径的最后一段目录名最好与包名一致**
+>
+> main.go
+>
+> ```go
+> package main
+> 
+> import "github.com/test-mod"
+> 
+> func main {
+>     mymod.New()
+> }
+> ```
+>
+> test-mod.go
+>
+> ```go
+> package mymod//在代码调用时，用的是这个包名，而不是文件名
+> 
+> import "fmt"
+> 
+> func New() {
+>     fmt.Println("run...")
+> }
+> ```
+>
+> 当包名与包导入路径中的最后一个目录名不同时，最好用下面的语法将包名显式放入包导入语句
+>
+> ```go
+> import mymod "github.com/test-mod"
+> ```
+>
+> 
 
 ## 四、go编译器相关
 
