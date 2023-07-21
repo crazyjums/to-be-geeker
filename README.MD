@@ -178,6 +178,58 @@
 
 ##### （1）快速排序
 
+###### [1] 思路
+
+
+
+![quick_sort.png](.img/1652980493-wDmBKe-quick_sort.png)
+
+[2] 代码实现
+
+```go
+package main
+
+import "fmt"
+
+func quickSort(arr []int) {
+    if len(arr) <= 1 {
+        return
+    }
+
+    pivot := arr[0]
+    left, right := 1, len(arr)-1
+
+    for left <= right {
+        for left <= right && arr[left] < pivot {
+            left++
+        }
+
+        for left <= right && arr[right] > pivot {
+            right--
+        }
+
+        if left <= right {
+            arr[left], arr[right] = arr[right], arr[left]
+            left++
+            right--
+        }
+    }
+
+    arr[0], arr[right] = arr[right], arr[0]
+
+    quickSort(arr[:right])
+    quickSort(arr[right+1:])
+}
+
+func main() {
+    arr := []int{64, 34, 25, 12, 22, 11, 90}
+    fmt.Println("原始数组:", arr)
+
+    quickSort(arr)
+    fmt.Println("排序后数组:", arr)
+}
+```
+
 ##### （2）冒泡排序
 
 ###### [1] 思想
@@ -314,7 +366,54 @@ func SelectSort(array []int) []int {
 
 ##### （4）堆排序
 
+
+
 ##### （5）插入排序
+
+###### [1] 思路
+
+插入排序（Insertion Sort）是一种简单直观的排序算法，其思路可以概括为：将数组分为已排序部分和未排序部分，逐个将未排序部分的元素插入到已排序部分的合适位置，直到所有元素都在已排序部分中形成有序序列。
+
+具体步骤如下：
+
+1. 从第一个元素开始，将其视为已排序部分。
+2. 取出下一个元素，在已排序部分中从后往前扫描，将比当前元素大的元素向右移动，直到找到合适的位置插入当前元素。
+3. 重复步骤2，直到所有元素都被插入到正确的位置。
+
+在每次插入操作中，当前元素会与已排序部分中的元素进行比较，如果当前元素小于已排序部分的某个元素，则将这个元素后移，为当前元素腾出插入位置。这样，经过多次插入操作，未排序部分的元素会逐渐插入到已排序部分，直到整个数组形成有序序列。
+
+###### [2] 代码实现
+
+```go
+package main
+
+import "fmt"
+
+func insertionSort(arr []int) {
+    n := len(arr)
+
+    for i := 1; i < n; i++ {
+        key := arr[i]
+        j := i - 1
+
+        // 将比key大的元素向右移动
+        for j >= 0 && arr[j] > key {
+            arr[j+1] = arr[j]
+            j = j - 1
+        }
+
+        arr[j+1] = key
+    }
+}
+
+func main() {
+    arr := []int{64, 34, 25, 12, 22, 11, 90}
+    fmt.Println("原始数组:", arr)
+
+    insertionSort(arr)
+    fmt.Println("排序后数组:", arr)
+}
+```
 
 ##### （6）归并排序
 
@@ -399,6 +498,79 @@ func merge(left []int, right []int) []int {
 #### 4 字符串
 
 #### 5 链表
+
+##### （1）链表反转
+
+###### [1] 思路
+
+链表反转的思路是通过遍历链表，将每个节点的Next指针指向其前一个节点，从而实现链表的反转。
+
+具体步骤如下：
+
+1. 定义两个指针prev和curr，初始时prev为nil，curr为链表的头节点。
+2. 开始遍历链表，每次迭代将curr的Next指针指向prev，这样就将当前节点反转。
+3. 接着将prev和curr都向后移动一个位置，继续遍历链表，直到curr为nil，表示遍历到了链表的末尾。
+4. 最后返回prev，即为反转后的链表的头节点。
+
+例如，有一个链表1 -> 2 -> 3 -> 4 -> 5，通过反转操作，得到的链表为：5 -> 4 -> 3 -> 2 -> 1。
+
+链表反转的过程中，每个节点都需要修改Next指针的指向，时间复杂度为O(n)，其中n是链表的长度。反转过程中只需要常数级的额外空间，因此空间复杂度为O(1)。链表反转是一个经典的链表操作，也是面试中常见的问题。
+
+###### [2] 代码实现
+
+```go
+package main
+
+import "fmt"
+
+type ListNode struct {
+    Val  int
+    Next *ListNode
+}
+
+func reverseList(head *ListNode) *ListNode {
+    var prev *ListNode
+    curr := head
+
+    for curr != nil {
+        temp := curr.Next
+        curr.Next = prev
+        prev = curr
+        curr = temp
+    }
+
+    return prev
+}
+
+func printList(head *ListNode) {
+    curr := head
+    for curr != nil {
+        fmt.Printf("%d ", curr.Val)
+        curr = curr.Next
+    }
+    fmt.Println()
+}
+
+func main() {
+    // 构造链表 1 -> 2 -> 3 -> 4 -> 5
+    head := &ListNode{Val: 1}
+    head.Next = &ListNode{Val: 2}
+    head.Next.Next = &ListNode{Val: 3}
+    head.Next.Next.Next = &ListNode{Val: 4}
+    head.Next.Next.Next.Next = &ListNode{Val: 5}
+
+    fmt.Println("原始链表：")
+    printList(head)
+
+    // 反转链表
+    head = reverseList(head)
+
+    fmt.Println("反转后的链表：")
+    printList(head)
+}
+```
+
+
 
 #### 6 树
 
