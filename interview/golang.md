@@ -1733,7 +1733,7 @@ func main() {
 下面是示例代码演示了如何检查一个指针是否为空：
 
 ```go
-goCopy codefunc main() {
+func main() {
     var ptr *int
 
     // 使用 == 比较运算符检查指针是否为空
@@ -1769,7 +1769,7 @@ func getNilPointer() *int {
 在 Go 语言中，数组名本身就是一个指向数组的指针，指向数组的第一个元素的地址。可以通过取数组名的地址来获取指向数组的指针。例如：
 
 ```go
-goCopy codefunc main() {
+func main() {
     // 声明一个数组
     arr := [5]int{1, 2, 3, 4, 5}
 
