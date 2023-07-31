@@ -112,7 +112,7 @@ func main() {
 现在用Go语言实现最长回文子串问题：
 
 ```go
-goCopy codepackage main
+package main
 
 import "fmt"
 
@@ -167,7 +167,7 @@ func main() {
 现在用Go语言实现回文串的个数问题：
 
 ```go
-goCopy codepackage main
+package main
 
 import "fmt"
 
@@ -224,7 +224,7 @@ func main() {
 现在用Go语言实现0-1背包问题：
 
 ```go
-goCopy codepackage main
+package main
 
 import "fmt"
 
@@ -292,7 +292,7 @@ func main() {
 现在用Go语言实现青蛙过河问题：
 
 ```go
-goCopy codepackage main
+package main
 
 import "fmt"
 
@@ -394,7 +394,7 @@ func main() {
 现在用Go语言实现最长公共子序列问题：
 
 ```go
-goCopy codepackage main
+package main
 
 import "fmt"
 
@@ -448,7 +448,7 @@ func main() {
 现在用Go语言实现最长递增子序列问题：
 
 ```go
-goCopy codepackage main
+package main
 
 import (
 	"fmt"
@@ -490,6 +490,128 @@ func main() {
 ```
 
 在上述代码中，我们使用动态规划来求解最长递增子序列的长度。首先定义`dp`数组，并初始化为1。然后遍历数组，对于每个元素，寻找之前的递增子序列，并更新`dp[i]`的值。最后，找出`dp`数组中的最大值，即为最长递增子序列的长度。这样我们就可以通过动态规划高效地解决最长递增子序列问题。
+
+### （6）打家劫舍（House Robber）问题：如不相邻的房屋偷窃的最大金额。
+
+解题思路：
+
+1. 我们可以使用动态规划来解决这个问题。定义一个一维数组`dp`，其中`dp[i]`表示偷窃前i个房屋能够得到的最大金额。
+2. 初始化`dp`数组，`dp[0]`为第一个房屋的金额，`dp[1]`为第二个房屋和第一个房屋金额的较大值。
+3. 遍历数组，对于每个房屋i，考虑两种情况：
+   - 偷窃第i个房屋：则最大金额为`dp[i-2] + nums[i]`，即偷窃第i-2个房屋的最大金额加上第i个房屋的金额。
+   - 不偷窃第i个房屋：则最大金额为`dp[i-1]`，即偷窃前i-1个房屋的最大金额。
+   - 取两种情况中的较大值作为`dp[i]`的值。
+4. 最终，`dp[n-1]`即为偷窃到的最大金额，其中n为房屋的个数。
+
+现在用Go语言实现打家劫舍问题：
+
+```go
+package main
+
+import "fmt"
+
+func rob(nums []int) int {
+	n := len(nums)
+	if n == 0 {
+		return 0
+	}
+	if n == 1 {
+		return nums[0]
+	}
+
+	dp := make([]int, n)
+	dp[0] = nums[0]
+	dp[1] = max(nums[0], nums[1])
+
+	for i := 2; i < n; i++ {
+		dp[i] = max(dp[i-2]+nums[i], dp[i-1])
+	}
+
+	return dp[n-1]
+}
+
+func max(a, b int) int {
+	if a > b {
+		return a
+	}
+	return b
+}
+
+func main() {
+	nums := []int{1, 2, 3, 1}
+	fmt.Println("偷窃到的最大金额：", rob(nums)) // 输出 4，偷窃第1个和第3个房屋，金额为1 + 3 = 4
+}
+```
+
+在上述代码中，我们使用动态规划来解决打家劫舍问题。通过计算dp数组，得到了在不触发警报的情况下，能够偷窃到的最大金额。这样我们就通过动态规划高效地解决了打家劫舍问题。
+
+### （7）乘积最大子数组（Maximum Product Subarray）问题：如乘积最大子数组。
+
+解题思路：
+
+1. 我们可以使用动态规划来解决这个问题。定义两个一维数组`dpMax`和`dpMin`，其中`dpMax[i]`表示以第i个元素结尾的乘积最大子数组的乘积，`dpMin[i]`表示以第i个元素结尾的乘积最小子数组的乘积。
+2. 初始化`dpMax[0]`和`dpMin[0]`都为第一个元素，即`dpMax[0] = nums[0]`和`dpMin[0] = nums[0]`。
+3. 遍历数组，对于每个元素`nums[i]`，计算`dpMax[i]`和`dpMin[i]`的值：
+   - 如果`nums[i]`为负数，则交换`dpMax[i-1]`和`dpMin[i-1]`的值，因为乘以负数会导致最大值变最小值，最小值变最大值。
+   - 更新`dpMax[i]`为`max(nums[i], dpMax[i-1]*nums[i])`，即要么取当前元素，要么与前一个元素相乘。
+   - 更新`dpMin[i]`为`min(nums[i], dpMin[i-1]*nums[i])`，即要么取当前元素，要么与前一个元素相乘。
+4. 最终，乘积最大子数组的乘积即为`dpMax`数组中的最大值。
+
+现在用Go语言实现乘积最大子数组问题：
+
+```go
+package main
+
+import "fmt"
+
+func maxProduct(nums []int) int {
+	n := len(nums)
+	if n == 0 {
+		return 0
+	}
+
+	dpMax := make([]int, n)
+	dpMin := make([]int, n)
+	dpMax[0], dpMin[0] = nums[0], nums[0]
+	maxProduct := nums[0]
+
+	for i := 1; i < n; i++ {
+		if nums[i] < 0 {
+			dpMax[i], dpMin[i] = dpMin[i-1]*nums[i], dpMax[i-1]*nums[i]
+		} else {
+			dpMax[i], dpMin[i] = dpMax[i-1]*nums[i], dpMin[i-1]*nums[i]
+		}
+
+		dpMax[i] = max(nums[i], max(dpMax[i], dpMin[i]))
+		dpMin[i] = min(nums[i], min(dpMax[i], dpMin[i]))
+
+		maxProduct = max(maxProduct, dpMax[i])
+	}
+
+	return maxProduct
+}
+
+func max(a, b int) int {
+	if a > b {
+		return a
+	}
+	return b
+}
+
+func min(a, b int) int {
+	if a < b {
+		return a
+	}
+	return b
+}
+
+func main() {
+	nums := []int{2, 3, -2, 4}
+	fmt.Println("乘积最大子数组的乘积：", maxProduct(nums)) // 输出 6，乘积最大的子数组为[2, 3]
+}
+```
+
+在上述代码中，我们使用动态规划来解决乘积最大子数组问题。通过计算`dpMax`和`dpMin`数组，找到了乘积最大的连续子数组的乘积。这样我们就通过动态规划高效地解决了乘积最大子数组问题。
 
 ## 2 回溯算法
 
@@ -2584,7 +2706,7 @@ func main() {
 根据以上思路，可以实现如下的 Go 语言代码：
 
 ```go
-goCopy codepackage main
+package main
 
 type TreeNode struct {
 	Val   int
@@ -2631,7 +2753,7 @@ func main() {
 以下是使用 Go 语言实现在二叉搜索树中查找指定节点的示例代码：
 
 ```go
-goCopy codepackage main
+package main
 
 type TreeNode struct {
 	Val   int
