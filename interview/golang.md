@@ -1287,6 +1287,44 @@ Go的切片（Slice）在并发环境下被认为是线程不安全的，主要�
 
 除了切片，Go的映射（Map）也存在类似的线程不安全问题，同样需要注意并发访问的控制。在并发编程中，正确地处理共享数据是至关重要的，否则可能会导致不可预料的问题。
 
+## （16）go的切片在进行range遍历的时候，前面接收的k,v 的内存地址会发生变化吗
+
+在 Go 中，使用 `for range` 遍历切片时，前面接收的索引 `k` 和值 `v` 的内存地址是不会发生变化的。这意味着在整个循环过程中，`k` 和 `v` 会一直引用相同的内存地址，不会随着循环的进行而改变。
+
+具体来说，`for range` 遍历切片时，每次迭代都会将当前元素的值拷贝给循环变量 `v`，而不是将切片元素的地址赋值给 `v`。因此，`v` 指向的是切片元素的一个副本，而不是原始切片元素的地址。
+
+以下是一个示例代码，展示了在 `for range` 循环中 `k` 和 `v` 的内存地址不会变化的情况：
+
+```go
+gopackage main
+
+import "fmt"
+
+func main() {
+	slice := []int{1, 2, 3, 4, 5}
+
+	fmt.Println("Original Slice:")
+	fmt.Printf("Slice Address: %p\n", &slice)
+	for k, v := range slice {
+		fmt.Printf("Index: %d, Value: %d, Address: %p\n", k, v, &v)
+	}
+}
+```
+
+输出结果可能类似于：
+
+```
+Original Slice:
+Slice Address: 0xc00000c080
+Index: 0, Value: 1, Address: 0xc000008088
+Index: 1, Value: 2, Address: 0xc000008088
+Index: 2, Value: 3, Address: 0xc000008088
+Index: 3, Value: 4, Address: 0xc000008088
+Index: 4, Value: 5, Address: 0xc000008088
+```
+
+可以看到，`v` 的内存地址在整个循环过程中保持不变，都指向同一个地址，而不是变化的。这表明 `for range` 遍历时，`v` 是被复制的，而不是直接引用原始切片元素的地址。
+
 # 五、string相关的面试题
 
 1. 字符串反转：如何实现将一个字符串反转，例如将 "hello" 反转为 "olleh"。
