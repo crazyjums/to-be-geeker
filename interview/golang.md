@@ -166,6 +166,80 @@ func main() {
 
 通过以上示例，我们展示了如何将通道作为函数参数传递，并在多个goroutine之间进行数据传递和通信。当合理使用通道传递数据时，可以很好地实现并发编程中的数据同步和通信。
 
+## （5）go中的channel是可以比较的吗
+
+在 Go 中，`channel` 是可以进行比较操作的。比较 channel 可以用于判断两个 channel 是否指向同一个 channel 实例。
+
+请注意，当比较两个 channel 时，只有在它们都是有效（非 nil）的情况下才会得到有意义的结果。如果一个或两个 channel 是 nil，比较的结果将是无效的。
+
+以下是一个示例代码：
+
+```go
+package main
+
+import "fmt"
+
+func main() {
+    ch1 := make(chan int)
+    ch2 := make(chan int)
+    ch3 := ch1
+
+    fmt.Println(ch1 == ch2) // false, ch1和ch2是不同的channel实例
+    fmt.Println(ch1 == ch3) // true, ch1和ch3指向同一个channel实例
+}
+```
+
+在这个例子中，我们创建了两个不同的 channel 实例 `ch1` 和 `ch2`，然后将 `ch1` 的引用赋值给 `ch3`。比较 `ch1` 和 `ch2` 的结果是 `false`，因为它们是两个不同的 channel 实例。而比较 `ch1` 和 `ch3` 的结果是 `true`，因为它们指向同一个 channel 实例。
+
+需要注意的是，在大多数情况下，比较 channel 的操作并不常用，因为通常我们更关心 channel 上的数据传递和同步操作。在实际应用中，对 channel 的比较很少会直接使用。
+
+## （6）如果往一个已经关闭的channel中发送数据，会发生什么
+
+如果往一个已经关闭的 channel 中发送数据，会触发运行时 panic。
+
+当一个 channel 被关闭后，它便不能再用于发送数据，只能用于接收数据。如果你尝试在一个已关闭的 channel 上执行发送操作，Go 运行时系统会检测到这个错误并抛出一个 panic。这样的设计是为了防止在并发环境下出现潜在的数据竞争和不确定性行为。
+
+以下是一个示例代码：
+
+```go
+package main
+
+import "fmt"
+
+func main() {
+    ch := make(chan int)
+
+    // 关闭 channel
+    close(ch)
+
+    // 向已关闭的 channel 发送数据，会导致 panic
+    ch <- 42
+}
+```
+
+在这个例子中，我们先创建了一个 channel `ch`，然后使用 `close()` 函数关闭了这个 channel。接着，我们尝试向已关闭的 channel `ch` 发送数据 `42`，这会导致运行时 panic，输出类似于 "panic: send on closed channel" 的错误信息。
+
+要避免此类错误，在发送数据之前应该先检查 channel 是否已经关闭，可以使用 Go 语言提供的多返回值的方式来实现：
+
+```go
+if !closed(ch) {
+    ch <- data
+}
+```
+
+或者在接收数据的一端，使用带有第二个返回值的形式进行检查：
+
+```go
+data, ok := <-ch
+if ok {
+    // 处理接收到的数据
+} else {
+    // channel 已关闭
+}
+```
+
+通过这样的方式，你可以避免向已关闭的 channel 发送数据，从而提高代码的健壮性。
+
 # 三、map相关面试题
 
 在Go语言的面试中，关于map的问题也是很常见的。以下是一些可能出现的面试题：
@@ -1296,7 +1370,7 @@ Go的切片（Slice）在并发环境下被认为是线程不安全的，主要�
 以下是一个示例代码，展示了在 `for range` 循环中 `k` 和 `v` 的内存地址不会变化的情况：
 
 ```go
-gopackage main
+package main
 
 import "fmt"
 
