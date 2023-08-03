@@ -988,7 +988,18 @@ func main() {
 
 在上述代码中，我们首先定义了辅助函数`exist`，用于判断是否存在匹配的字符串路径。在函数中，我们遍历二维字符数组的每个位置，以该位置为起点，使用回溯算法来寻找匹配的路径。在回溯的过程中，我们递归地向上下左右四个方向搜索下一个字符，并使用辅助数组`visited`来标记已访问过的位置，避免重复访问。最终判断是否成功找到整个字符串的路径，即是否存在匹配的字符串。
 
-## 3 搜索算法
+## 3 查找算法
+
+1. 二分查找：实现一个有序数组的二分查找算法。
+2. 在旋转排序数组中搜索：给定一个经过旋转的有序数组，查找特定目标值。
+3. 第K个排列：给定一个整数n和k，返回第k个按顺序排列的序列。
+4. 两个有序数组的交集：给定两个有序数组，找到它们的交集。
+5. 缺失的数字：给定一个包含0到n之间的n个不重复整数的数组，找到缺失的数字。
+6. 有效的完全平方数：给定一个正整数，判断它是否是一个完全平方数。
+7. 搜索插入位置：给定一个排序数组和一个目标值，在数组中找到目标值并返回其索引，如果目标值不存在，返回它将会被插入的位置的索引。
+8. 字符串中的第一个唯一字符：给定一个字符串，找到第一个不重复的字符，并返回它的索引。
+9. 两数之和：给定一个整数数组和一个目标值，在数组中找出和为目标值的两个数的索引。
+10. 单词搜索：给定一个二维字符数组和一个单词，在二维数组中查找该单词是否存在。
 
 ### （1）二分查找算法
 
@@ -1042,6 +1053,164 @@ func main() {
     }
 }
 ```
+
+### （2）在旋转排序数组中搜索：给定一个经过旋转的有序数组，查找特定目标值。
+
+#### [1] 思想
+
+这个题目是在一个经过旋转的有序数组中查找特定目标值，我们可以利用二分查找算法来解决。
+
+1. 初始化左指针`left`为0，右指针`right`为数组长度减1。
+2. 在每一次迭代中，计算中间指针`mid`，并比较`nums[mid]`与目标值`target`的关系。
+3. 如果`nums[mid]`等于`target`，则找到了目标值，直接返回`mid`。
+4. 如果`nums[mid]`小于等于`nums[right]`，说明右半部分是有序的。在有序的右半部分中判断`target`是否在其中，如果在其中则更新`left = mid + 1`，否则更新`right = mid - 1`。
+5. 如果`nums[mid]`大于等于`nums[left]`，说明左半部分是有序的。在有序的左半部分中判断`target`是否在其中，如果在其中则更新`right = mid - 1`，否则更新`left = mid + 1`。
+6. 重复步骤2至步骤5，直到找到目标值或者`left`大于`right`为止。
+
+#### [2] 代码实现
+
+```go
+package main
+
+import "fmt"
+
+func search(nums []int, target int) int {
+	left, right := 0, len(nums)-1
+
+	for left <= right {
+		mid := left + (right-left)/2
+
+		if nums[mid] == target {
+			return mid
+		} else if nums[mid] <= nums[right] {
+			if target > nums[mid] && target <= nums[right] {
+				left = mid + 1
+			} else {
+				right = mid - 1
+			}
+		} else if nums[mid] >= nums[left] {
+			if target < nums[mid] && target >= nums[left] {
+				right = mid - 1
+			} else {
+				left = mid + 1
+			}
+		}
+	}
+
+	return -1
+}
+
+func main() {
+	nums := []int{4, 5, 6, 7, 0, 1, 2}
+	target := 0
+	index := search(nums, target)
+	fmt.Printf("目标值 %d 在数组中的索引为 %d\n", target, index) // 输出：目标值 0 在数组中的索引为 4
+}
+```
+
+### （3）第K个排列：给定一个整数n和k，返回第k个按顺序排列的序列。
+
+#### [1] 思路 
+
+1. 使用阶乘（factorial）可以计算出第k个按顺序排列的序列的原因是排列的特性。在有n个不重复的数字进行排列时，共有n!种不同的排列方式。
+
+   考虑一个简单的例子，当n为3时，数字集合为{1, 2, 3}。我们可以按顺序依次列出所有的排列：
+
+   1. 123
+   2. 132
+   3. 213
+   4. 231
+   5. 312
+   6. 321
+
+   以上就是数字1、2、3的所有排列。可以发现，每个数字在每一位上都有(n-1)!种排列方式，因为每个数字都有(n-1)个位置可以放置。
+
+   现在，假设我们要找第k个按顺序排列的序列，我们可以通过以下步骤进行计算：
+
+   1. 首先，计算n的阶乘`factorial`，即n!的值。在例子中，n为3，所以`factorial`为3! = 6。
+   2. 然后，我们要找的是第k个排列，而数组索引是从0开始的，所以需要将k减1。
+   3. 接下来，我们可以根据k的值来计算每个数字的索引。对于每个数字在每一位上的排列方式有(n-1)!种，所以我们可以通过`k / (n-1)!`来得到当前位上数字的索引。
+   4. 然后，将得到的数字从数字集合中取出，并将k取模`(n-1)!`，得到剩余的排列方式。
+   5. 重复步骤3和步骤4，直到找到n个数字，构成第k个排列。
+
+   通过上述计算，我们可以高效地找到第k个按顺序排列的序列。这种方法的时间复杂度为O(n)，其中n为给定的整数。
+
+#### [2] 代码实现
+
+```go
+package main
+
+import "fmt"
+
+func getPermutation(n int, k int) string {
+	factorial := make([]int, n)
+	factorial[0] = 1
+	for i := 1; i < n; i++ {
+		factorial[i] = factorial[i-1] * i
+	}
+
+	nums := make([]int, n)
+	for i := 1; i <= n; i++ {
+		nums[i-1] = i
+	}
+
+	k-- // 调整k的值，因为索引是从0开始的
+
+	var res strin
+	for i := n - 1; i >= 0; i-- {
+		index := k / factorial[i]
+		k %= factorial[i]
+		res += fmt.Sprintf("%d", nums[index])
+		nums = append(nums[:index], nums[index+1:]...)
+	}
+
+	return res
+}
+
+func main() {
+	n := 3
+	k := 3
+	fmt.Printf("第%d个按顺序排列的序列是：%s\n", k, getPermutation(n, k)) // 输出：第3个按顺序排列的序列是：213
+}
+```
+
+### （4）缺失的数字：给定一个包含0到n之间的n个不重复整数的数组，找到缺失的数字。
+
+#### [1] 思路
+
+ 解题思路（使用异或运算）：
+
+1. 初始化一个变量`missing`，初始值为n，表示缺失的数字。
+2. 遍历数组，将`missing`与数组中的每个元素以及它们的索引依次进行异或运算。
+3. 最终`missing`的值就是缺失的数字。
+
+这个方法的核心在于异或运算的特性：两个相同的数字进行异或运算结果为0，一个数字和0进行异或运算结果为它本身。
+
+### [2] 代码实现
+
+```go
+package main
+
+import "fmt"
+
+func missingNumber(nums []int) int {
+	n := len(nums)
+	missing := n
+
+	for i, num := range nums {
+		missing ^= i ^ num
+	}
+
+	return missing
+}
+
+func main() {
+	nums := []int{3, 0, 1}
+	fmt.Printf("缺失的数字是：%d\n", missingNumber(nums)) // 输出：缺失的数字是：2
+}
+```
+
+
 
 ## 4 贪心算法
 
@@ -1723,6 +1892,54 @@ func main() {
 
     quickSort(arr)
     fmt.Println("排序后数组:", arr)
+}
+```
+
+```go
+package main
+
+import "fmt"
+
+func QuickSortV2(nums []int) []int {
+	if len(nums) <= 1 {
+		return nums
+	}
+
+	realQuickSortV2(nums, 0, len(nums)-1)
+	return nums
+}
+
+func realQuickSortV2(nums []int, start, end int) {
+	if start >= end {
+		return
+	}
+
+	pIndex := partition(nums, start, end)
+	realQuickSortV2(nums, start, pIndex-1)
+	realQuickSortV2(nums, pIndex+1, end)
+}
+
+func partition(nums []int, start, end int) int {
+	pivot := nums[start]
+	left, right := start+1, end
+	for left <= right {
+		for left <= right && nums[left] <= pivot {
+			left++
+		}
+		for left <= right && nums[right] > pivot {
+			right--
+		}
+		if left <= right {
+			nums[left], nums[right] = nums[right], nums[left]
+		}
+	}
+
+	nums[start], nums[right] = nums[right], nums[start]
+	return right
+}
+
+func main() {
+    fmt.Println(QuickSortV2([]int{11, 9, 1, 5, 3, 0, 22, 4, 6, 7, 8, 8}))
 }
 ```
 
