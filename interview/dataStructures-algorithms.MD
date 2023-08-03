@@ -1186,7 +1186,7 @@ func main() {
 
 这个方法的核心在于异或运算的特性：两个相同的数字进行异或运算结果为0，一个数字和0进行异或运算结果为它本身。
 
-### [2] 代码实现
+#### [2] 代码实现
 
 ```go
 package main
@@ -1210,7 +1210,73 @@ func main() {
 }
 ```
 
+### （5）缺失的数字：给定一个包含0到n之间的n个不重复整数的数组，找到缺失的数字。
 
+#### [1] 思路
+
+解题思路： 判断一个正整数是否是完全平方数可以使用二分查找或者牛顿迭代法。
+
+1. 二分查找方法：
+   - 定义左边界`left`为1，右边界`right`为该正整数本身。
+   - 在[left, right]范围内进行二分查找，计算中间值`mid`。
+   - 如果`mid*mid`等于目标数，则该数是完全平方数，返回true。
+   - 如果`mid*mid`小于目标数，则在[mid+1, right]范围内继续查找。
+   - 如果`mid*mid`大于目标数，则在[left, mid-1]范围内继续查找。
+   - 重复上述步骤，直到找到完全平方数或者左边界大于右边界，说明该数不是完全平方数，返回false。
+2. 牛顿迭代法：
+   - 使用牛顿迭代法可以更快地逼近完全平方数的近似值。
+   - 定义初始值`x`为目标数，然后不断使用公式`x = (x + num/x) / 2`来更新`x`，直到`x`的平方与目标数的差的绝对值小于某个阈值（例如1e-6）为止。
+   - 最后判断`x`的平方是否等于目标数，如果是，则该数是完全平方数，返回true，否则返回false。
+
+#### [2] 代码实现
+
+```go
+package main
+
+import "fmt"
+
+// 使用二分查找方法判断完全平方数
+func isPerfectSquareBinary(num int) bool {
+	if num < 2 {
+		return true
+	}
+
+	left, right := 1, num
+	for left <= right {
+		mid := left + (right-left)/2
+		square := mid * mid
+		if square == num {
+			return true
+		} else if square < num {
+			left = mid + 1
+		} else {
+			right = mid - 1
+		}
+	}
+
+	return false
+}
+
+// 使用牛顿迭代法判断完全平方数
+func isPerfectSquareNewton(num int) bool {
+	if num < 2 {
+		return true
+	}
+
+	x := num
+	for x*x > num {
+		x = (x + num/x) / 2
+	}
+
+	return x*x == num
+}
+
+func main() {
+	num := 16
+	fmt.Printf("%d是完全平方数吗？ %v\n", num, isPerfectSquareBinary(num)) // 输出：16是完全平方数吗？ true
+	fmt.Printf("%d是完全平方数吗？ %v\n", num, isPerfectSquareNewton(num)) // 输出：16是完全平方数吗？ true
+}
+```
 
 ## 4 贪心算法
 
