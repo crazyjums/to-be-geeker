@@ -2508,6 +2508,561 @@ func main() {
 }
 ```
 
+### （2）快慢指针
+
+1. 链表中的倒数第 k 个节点：找到链表的倒数第 k 个节点。
+2. 判断链表是否有环：判断一个链表是否存在环，即链表的尾节点指向链表中的某个节点。
+3. 链表的中间节点：找到链表的中间节点，如果链表节点数为偶数，则返回中间两个节点的任意一个。
+4. 有序数组的两数之和：在有序数组中找到两个数，使它们的和等于给定的目标值。
+5. 合并两个有序链表：将两个有序链表合并为一个新的有序链表。
+6. 重排链表：将链表重新排序，使得链表的第一个元素和最后一个元素相邻，依次类推。
+7. 回文链表：判断一个链表是否是回文链表，即正着读和反着读都是一样的。
+8. 删除链表的倒数第 n 个节点：删除链表的倒数第 n 个节点，并返回链表的头节点。
+
+#### [1] 链表中的倒数第 k 个节点：找到链表的倒数第 k 个节点。
+
+要找链表的倒数第 k 个节点，可以使用双指针法来解决。双指针法通常使用两个指针来遍历链表，其中一个指针领先于另一个指针，从而达到找到倒数第 k 个节点的目的。
+
+具体步骤如下：
+
+1. 定义两个指针 `fast` 和 `slow`，初始时都指向链表的头节点。
+2. 将 `fast` 指针向前移动 k 步，使得 `fast` 指针领先 `slow` 指针 k 个节点。
+3. 然后同时移动 `fast` 和 `slow` 指针，直到 `fast` 指针达到链表的末尾。
+4. 此时，`slow` 指针指向的就是链表的倒数第 k 个节点。
+
+如果链表的长度小于 k，需要特殊处理，可以在第2步的时候检查是否还有剩余节点。
+
+以下是用 Go 语言实现找到链表的倒数第 k 个节点的代码：
+
+```go
+package main
+
+import "fmt"
+
+type ListNode struct {
+	Val  int
+	Next *ListNode
+}
+
+func findKthFromEnd(head *ListNode, k int) *ListNode {
+	if head == nil || k <= 0 {
+		return nil
+	}
+
+	fast, slow := head, head
+
+	// 将 fast 指针向前移动 k 步
+	for i := 0; i < k; i++ {
+		if fast == nil {
+			return nil // 链表的长度小于 k，直接返回 nil
+		}
+		fast = fast.Next
+	}
+
+	// 同时移动 fast 和 slow 指针
+	for fast != nil {
+		fast = fast.Next
+		slow = slow.Next
+	}
+
+	return slow
+}
+
+func main() {
+	// 创建链表 1 -> 2 -> 3 -> 4 -> 5
+	head := &ListNode{Val: 1}
+	head.Next = &ListNode{Val: 2}
+	head.Next.Next = &ListNode{Val: 3}
+	head.Next.Next.Next = &ListNode{Val: 4}
+	head.Next.Next.Next.Next = &ListNode{Val: 5}
+
+	k := 2
+	result := findKthFromEnd(head, k)
+	if result != nil {
+		fmt.Printf("链表的倒数第 %d 个节点的值为：%d\n", k, result.Val) // 输出：链表的倒数第 2 个节点的值为：4
+	} else {
+		fmt.Printf("链表的长度小于 %d\n", k)
+	}
+}
+```
+
+在上述代码中，我们使用了双指针法找到链表的倒数第 k 个节点。输出结果为链表的倒数第 2 个节点的值为 4。如果链表的长度小于 k，将输出提示信息 "链表的长度小于 k"。
+
+#### [2] 链表的中间节点：找到链表的中间节点，如果链表节点数为偶数，则返回中间两个节点的任意一个
+
+要找到链表的中间节点，可以使用快慢指针法来解决。具体步骤如下：
+
+1. 定义两个指针 `slow` 和 `fast`，初始时都指向链表的头节点。
+2. 将 `fast` 指针每次向前移动两步，将 `slow` 指针每次向前移动一步，直到 `fast` 指针到达链表末尾。
+3. 此时，`slow` 指针指向的就是链表的中间节点。
+
+如果链表节点数为偶数，那么最终 `slow` 指针会停在靠前的那个中间节点（例如链表节点数为 4，则 `slow` 停在第 2 个节点）。
+
+以下是用 Go 语言实现找到链表的中间节点的代码：
+
+```go
+package main
+
+import "fmt"
+
+type ListNode struct {
+	Val  int
+	Next *ListNode
+}
+
+func findMiddleNode(head *ListNode) *ListNode {
+	if head == nil || head.Next == nil {
+		return head
+	}
+
+	slow, fast := head, head
+
+	for fast != nil && fast.Next != nil {
+		slow = slow.Next
+		fast = fast.Next.Next
+	}
+
+	return slow
+}
+
+func main() {
+	// 创建链表 1 -> 2 -> 3 -> 4 -> 5
+	head := &ListNode{Val: 1}
+	head.Next = &ListNode{Val: 2}
+	head.Next.Next = &ListNode{Val: 3}
+	head.Next.Next.Next = &ListNode{Val: 4}
+	head.Next.Next.Next.Next = &ListNode{Val: 5}
+
+	middle := findMiddleNode(head)
+	fmt.Printf("链表的中间节点的值为：%d\n", middle.Val) // 输出：链表的中间节点的值为：3
+}
+```
+
+在上述代码中，我们定义了函数 `findMiddleNode` 来找到链表的中间节点。输出结果为链表的中间节点的值为 3。如果链表节点数为偶数，该算法也能正确找到中间节点。
+
+#### [3] 删除链表的倒数第 n 个节点：删除链表的倒数第 n 个节点，并返回链表的头节点。
+
+要删除链表的倒数第 n 个节点，可以使用快慢指针的方法来实现。首先，我们让快指针先向前移动 n 步，然后让快指针和慢指针同时向前移动，直到快指针到达链表末尾。此时，慢指针指向的节点就是要删除的倒数第 n 个节点的前一个节点，我们可以通过改变指针的指向来删除该节点。
+
+以下是用 Go 语言实现删除链表的倒数第 n 个节点的代码：
+
+```go
+package main
+
+type ListNode struct {
+	Val  int
+	Next *ListNode
+}
+
+func removeNthFromEnd(head *ListNode, n int) *ListNode {
+	// 使用虚拟头节点，避免处理头节点的特殊情况
+	dummy := &ListNode{Next: head}
+	fast, slow := dummy, dummy
+
+	// 快指针先向前移动 n+1 步
+	for i := 0; i <= n; i++ {
+		fast = fast.Next
+	}
+
+	// 快慢指针同时向前移动，直到快指针到达链表末尾
+	for fast != nil {
+		fast = fast.Next
+		slow = slow.Next
+	}
+
+	// 删除倒数第 n 个节点
+	slow.Next = slow.Next.Next
+
+	return dummy.Next
+}
+```
+
+在上述代码中，我们使用了一个虚拟头节点 `dummy` 来简化对头节点的处理，然后利用快慢指针找到要删除的节点的前一个节点，并删除该节点。最后返回虚拟头节点的 `Next` 字段，即为删除倒数第 n 个节点后的链表头节点。
+
+#### [4] 判断链表是否有环（Linked List Cycle）：使用快慢指针遍历链表，如果存在环，则快指针会追上慢指针，否则快指针会到达链表末尾
+
+判断链表是否有环的常用方法是使用快慢指针遍历链表。快指针每次移动两步，而慢指针每次移动一步。如果链表中存在环，快指针会不断追赶慢指针，最终两者会相遇。如果链表中没有环，快指针会先到达链表的末尾，此时慢指针还未到达末尾。
+
+以下是使用快慢指针判断链表是否有环的示例代码（Go语言实现）：
+
+```go
+package main
+
+type ListNode struct {
+	Val  int
+	Next *ListNode
+}
+
+func hasCycle(head *ListNode) bool {
+	if head == nil || head.Next == nil {
+		return false
+	}
+
+	slow, fast := head, head.Next
+	for fast != nil && fast.Next != nil {
+		if slow == fast {
+			return true // 快慢指针相遇，存在环
+		}
+		slow = slow.Next
+		fast = fast.Next.Next
+	}
+
+	return false // 快指针先到达链表末尾，不存在环
+}
+```
+
+在上述代码中，我们使用快慢指针遍历链表，当快慢指针相遇时，表示链表中存在环，返回true；当快指针先到达链表末尾时，表示链表中不存在环，返回false。
+
+#### [5] 判断链表是否为回文链表（Palindrome Linked List）：使用快慢指针找到链表的中间节点，然后翻转后半部分链表，并与前半部分链表进行比较，如果全部相等，则链表为回文链表。
+
+判断链表是否为回文链表的常用方法是使用快慢指针找到链表的中间节点，然后翻转后半部分链表，并与前半部分链表进行比较，如果全部相等，则链表为回文链表。
+
+以下是使用快慢指针判断链表是否为回文链表的示例代码（Go语言实现）：
+
+```go
+package main
+
+type ListNode struct {
+	Val  int
+	Next *ListNode
+}
+
+func isPalindrome(head *ListNode) bool {
+	if head == nil || head.Next == nil {
+		return true // 空链表或只有一个节点的链表都是回文链表
+	}
+
+	// 使用快慢指针找到链表的中间节点
+	slow, fast := head, head
+	for fast != nil && fast.Next != nil {
+		slow = slow.Next
+		fast = fast.Next.Next
+	}
+
+	// 翻转后半部分链表
+	secondHalf := reverseList(slow)
+
+	// 与前半部分链表进行比较
+	for head != nil && secondHalf != nil {
+		if head.Val != secondHalf.Val {
+			return false // 链表值不相等，不是回文链表
+		}
+		head = head.Next
+		secondHalf = secondHalf.Next
+	}
+
+	return true // 链表值全部相等，是回文链表
+}
+
+// 翻转链表
+func reverseList(head *ListNode) *ListNode {
+	var prev *ListNode
+	curr := head
+
+	for curr != nil {
+		temp := curr.Next
+		curr.Next = prev
+		prev = curr
+		curr = temp
+	}
+
+	return prev
+}
+```
+
+在上述代码中，我们使用快慢指针找到链表的中间节点，然后翻转后半部分链表，并与前半部分链表进行比较，如果链表值全部相等，则链表为回文链表，返回true；如果链表值不相等，则链表不是回文链表，返回false。
+
+#### [6] 判断链表的交点（Intersection of Two Linked Lists）：使用快慢指针遍历两个链表，然后再将其中一个指针移动到另一个链表的头部，再继续遍历，当两个指针相遇时，即为链表的交点。
+
+**双指针：**
+
+判断链表的交点可以使用双指针的方法，但是不需要使用快慢指针。而是通过同时遍历两个链表，找到它们的长度差，然后将较长的链表指针先向前移动与较短链表长度差的步数，然后再同时遍历两个链表，直到两个指针相遇即为链表的交点。
+
+以下是判断链表的交点的正确解题思路和示例代码（Go语言实现）：
+
+```go
+package main
+
+type ListNode struct {
+	Val  int
+	Next *ListNode
+}
+
+func getIntersectionNode(headA, headB *ListNode) *ListNode {
+	lenA, lenB := 0, 0
+	currA, currB := headA, headB
+
+	// 计算链表A和链表B的长度
+	for currA != nil {
+		lenA++
+		currA = currA.Next
+	}
+	for currB != nil {
+		lenB++
+		currB = currB.Next
+	}
+
+	// 将较长链表的指针向前移动与较短链表长度差的步数
+	currA, currB = headA, headB
+	if lenA > lenB {
+		for i := 0; i < lenA-lenB; i++ {
+			currA = currA.Next
+		}
+	} else {
+		for i := 0; i < lenB-lenA; i++ {
+			currB = currB.Next
+		}
+	}
+
+	// 同时遍历两个链表，找到交点
+	for currA != nil && currB != nil {
+		if currA == currB {
+			return currA // 找到交点
+		}
+		currA = currA.Next
+		currB = currB.Next
+	}
+
+	return nil // 没有交点
+}
+```
+
+在上述代码中，我们先遍历两个链表，计算它们的长度，然后将较长链表的指针向前移动与较短链表长度差的步数，再同时遍历两个链表，找到它们的交点即可。如果没有交点，最终返回nil。
+
+**快慢指针：**
+
+对于判断链表是否有交点的问题，可以使用快慢指针的方法，但并不需要像判断链表是否有环那样使用快慢指针。
+
+具体步骤如下：
+
+1. 初始化两个指针`p1`和`p2`，分别指向链表A和链表B的头节点。
+2. 同时遍历两个链表，当`p1`和`p2`不为空时，每次将`p1`和`p2`都向后移动一步。
+3. 当`p1`到达链表A的末尾时，将它指向链表B的头节点继续遍历；当`p2`到达链表B的末尾时，将它指向链表A的头节点继续遍历。
+4. 继续遍历两个链表，直到`p1`和`p2`相等，或者同时为nil时退出循环。
+5. 如果`p1`和`p2`相等，则表示找到了链表的交点，返回`p1`或`p2`；如果同时为nil，则表示两个链表没有交点，返回nil。
+
+以下是使用快慢指针判断链表是否有交点的示例代码（Go语言实现）：
+
+```go
+package main
+
+type ListNode struct {
+	Val  int
+	Next *ListNode
+}
+
+func getIntersectionNode(headA, headB *ListNode) *ListNode {
+	p1, p2 := headA, headB
+
+	for p1 != p2 {
+		if p1 == nil {
+			p1 = headB
+		} else {
+			p1 = p1.Next
+		}
+
+		if p2 == nil {
+			p2 = headA
+		} else {
+			p2 = p2.Next
+		}
+	}
+
+	return p1
+}
+```
+
+在上述代码中，我们使用两个指针`p1`和`p2`同时遍历两个链表，当一个指针到达链表末尾时，将它指向另一个链表的头节点继续遍历。当两个指针相遇时，即为链表的交点，返回其中任意一个指针即可。如果没有交点，则两个指针同时为nil，最终返回nil。
+
+#### [7] 判断链表是否为循环链表（Linked List Cycle II）：使用快慢指针找到链表中的环，并找到环的入口节点。
+
+判断链表是否为循环链表，并找到环的入口节点，可以使用快慢指针的方法。快慢指针可以用来判断链表是否有环，而找到环的入口节点需要一些额外的操作。
+
+解题思路如下：
+
+1. 使用快慢指针，初始化两个指针`slow`和`fast`，分别指向链表的头节点。
+
+2. 快指针`fast`每次向前移动两步，慢指针`slow`每次向前移动一步，直到两个指针相遇，或者快指针指向链表的末尾（即没有环）为止。
+
+3. 如果快指针`fast`指向链表的末尾，则链表没有环，直接返回nil。
+
+4. 如果快指针`fast`和慢指针`slow`相遇，说明链表有环。
+
+5. 重新将慢指针`slow`指向链表的头节点，然后慢指针`slow`和快指针`fast`同时每次向前移动一步，直到两个指针再次相遇，这时的相遇点即为环的入口节点。
+
+   > 这么做可以得到环的入口节点的原因是快慢指针在相遇后，分别走到了环的入口节点和相遇点。
+   >
+   > 让慢指针`slow`重新指向链表头节点后，慢指针开始继续向前移动，而快指针`fast`则保持在相遇点位置不动。此时，慢指针和快指针的距离就是链表头节点到环的入口节点的距离，即`a`的距离。
+   >
+   > 然后，让慢指针`slow`和快指针`fast`同时每次向前移动一步，直到它们再次相遇。这时，慢指针移动的距离为`a + b`，而快指针移动的距离为`a + b + c + b`（其中`b`是环的长度，`c`是快指针绕环的圈数）。
+   >
+   > 由于快指针移动的速度是慢指针的两倍，所以`a + b + c + b`是`a + b`的两倍，即`2(a + b) = a + b + c + b`。从中可以得到`a = c`，也就是链表头节点到环的入口节点的距离等于快指针绕环的圈数乘以环的长度。
+   >
+   > 因此，当慢指针`slow`和快指针`fast`再次相遇时，相遇点即为环的入口节点。
+   >
+   > 这个原理可以简单地通过一个示意图来解释，但数学证明较为复杂，需要涉及到快慢指针的数学关系。总的来说，快慢指针的方法可以高效地找到环的入口节点。
+
+以下是使用快慢指针判断链表是否为循环链表，并找到环的入口节点的示例代码（Go语言实现）：
+
+```go
+package main
+
+type ListNode struct {
+	Val  int
+	Next *ListNode
+}
+
+func detectCycle(head *ListNode) *ListNode {
+	slow, fast := head, head
+
+	// 判断链表是否有环
+	for fast != nil && fast.Next != nil {
+		slow = slow.Next
+		fast = fast.Next.Next
+		if slow == fast {
+			break // 快慢指针相遇，链表有环
+		}
+	}
+
+	// 如果快指针指向链表的末尾，说明链表没有环
+	if fast == nil || fast.Next == nil {
+		return nil
+	}
+
+	// 找到环的入口节点
+	slow = head
+	for slow != fast {
+		slow = slow.Next
+		fast = fast.Next
+	}
+
+	return slow // 返回环的入口节点
+}
+```
+
+在上述代码中，我们先使用快慢指针判断链表是否有环，如果有环则找到相遇点，然后重新将慢指针指向链表头节点，再让慢指针和快指针同时移动，直到再次相遇，此时的相遇点即为环的入口节点，返回该节点即可。如果链表没有环，则直接返回nil。
+
+#### [8] 寻找旋转排序数组的最小值（Find Minimum in Rotated Sorted Array）：使用快慢指针找到旋转排序数组的旋转点。
+
+寻找旋转排序数组的最小值是一道经典的二分查找问题。由于给定数组是一个旋转过的有序数组，我们可以使用二分查找来快速定位旋转点（最小值所在位置）。
+
+解题思路如下：
+
+1. 初始化两个指针`left`和`right`，分别指向数组的首尾元素。
+2. 在每次迭代中，计算中间位置`mid`，并比较`nums[mid]`与`nums[right]`的大小：
+   - 如果`nums[mid] > nums[right]`，说明旋转点在右半部分，最小值在`mid`的右侧，令`left = mid + 1`。
+   - 如果`nums[mid] < nums[right]`，说明旋转点在左半部分，最小值在`mid`或`mid`的左侧，令`right = mid`。
+   - 如果`nums[mid] == nums[right]`，无法判断旋转点在哪一侧，但可以排除`right`位置，令`right = right - 1`。
+3. 重复上述步骤，直到`left`和`right`指向同一个位置，此时指向的元素即为最小值。
+
+以下是使用快慢指针找到旋转排序数组的旋转点的Go代码实现：
+
+```go
+package main
+
+func findMin(nums []int) int {
+	left, right := 0, len(nums) - 1
+
+	for left < right {
+		mid := left + (right - left) / 2
+
+		if nums[mid] > nums[right] {
+			left = mid + 1
+		} else if nums[mid] < nums[right] {
+			right = mid
+		} else {
+			right--
+		}
+	}
+
+	return nums[left]
+}
+```
+
+在这个实现中，我们通过不断缩小搜索范围，最终找到了旋转排序数组的旋转点。时间复杂度为O(logN)，其中N是数组的长度。
+
+### （3）合并两个有序链表：将两个有序链表合并为一个新的有序链表。
+
+合并两个有序链表可以通过递归或迭代的方式来解决。以下是两种方法的解题思路和 Go 语言实现：
+
+**方法一：递归**
+
+递归是一种直观且简单的解决方法。基本思路是比较两个链表的当前节点值，较小的节点作为合并后的链表的当前节点，然后递归地合并剩余的部分。
+
+1. 如果两个链表中有一个为空，则直接返回另一个链表。
+2. 比较两个链表的当前节点值，较小的节点作为合并后的链表的当前节点，并递归地合并较小节点的后续部分与另一个链表。
+3. 返回合并后的链表。
+
+以下是用 Go 语言实现合并两个有序链表的递归方法的代码：
+
+```go
+package main
+
+type ListNode struct {
+	Val  int
+	Next *ListNode
+}
+
+func mergeTwoLists(l1 *ListNode, l2 *ListNode) *ListNode {
+	if l1 == nil {
+		return l2
+	}
+	if l2 == nil {
+		return l1
+	}
+
+	if l1.Val < l2.Val {
+		l1.Next = mergeTwoLists(l1.Next, l2)
+		return l1
+	} else {
+		l2.Next = mergeTwoLists(l1, l2.Next)
+		return l2
+	}
+}
+```
+
+**方法二：迭代**
+
+迭代方法通过创建一个新的头节点和一个游标节点来实现合并。基本思路是比较两个链表的当前节点值，较小的节点接在游标节点后面，并将游标节点指向较小节点。然后继续比较两个链表的当前节点值，直到其中一个链表为空，将另一个链表的剩余部分接在游标节点后面。
+
+以下是用 Go 语言实现合并两个有序链表的迭代方法的代码：
+
+```go
+package main
+
+type ListNode struct {
+	Val  int
+	Next *ListNode
+}
+
+func mergeTwoLists(l1 *ListNode, l2 *ListNode) *ListNode {
+	dummy := &ListNode{}
+	cur := dummy
+
+	for l1 != nil && l2 != nil {
+		if l1.Val < l2.Val {
+			cur.Next = l1
+			l1 = l1.Next
+		} else {
+			cur.Next = l2
+			l2 = l2.Next
+		}
+		cur = cur.Next
+	}
+
+	if l1 != nil {
+		cur.Next = l1
+	}
+	if l2 != nil {
+		cur.Next = l2
+	}
+
+	return dummy.Next
+}
+```
+
+以上两种方法都可以正确地合并两个有序链表，并返回合并后的新链表头节点。选择哪种方法主要取决于个人习惯和喜好。
+
 ## 6 树
 
 ### （1）数据结构：
