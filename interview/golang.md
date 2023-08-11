@@ -1543,6 +1543,70 @@ func findSubstrIndex(str, substr string) int {
 
 总结：`new` 用于创建值类型的指针，并返回指针的零值；`make` 用于创建引用类型的数据结构，并进行初始化。根据不同的需求和数据类型，选择适当的函数来创建相应的数据结构。
 
+### 1）make可以用来创建并初始化一个自定义的复杂的结构体吗
+
+`make` 函数主要用于创建和初始化切片、映射和通道，并不能直接用于创建和初始化自定义的复杂结构体。对于自定义的复杂结构体，我们通常需要手动进行创建和初始化。
+
+如果要创建一个自定义的复杂结构体，并初始化其字段，可以通过以下两种方式实现：
+
+1. 字面量方式初始化：
+   在定义结构体的类型时，可以使用字面量方式直接初始化结构体的字段。
+
+```go
+package main
+
+import "fmt"
+
+type Person struct {
+	Name    string
+	Age     int
+	Address string
+}
+
+func main() {
+	// 使用字面量方式初始化结构体
+	p := Person{
+		Name:    "John",
+		Age:     30,
+		Address: "New York",
+	}
+
+	fmt.Println(p) // 输出 {John 30 New York}
+}
+```
+
+2. 使用构造函数：
+   定义一个返回结构体指针的构造函数，用于创建和初始化结构体，并返回指向结构体的指针。
+
+```go
+package main
+
+import "fmt"
+
+type Person struct {
+	Name    string
+	Age     int
+	Address string
+}
+
+func NewPerson(name string, age int, address string) *Person {
+	return &Person{
+		Name:    name,
+		Age:     age,
+		Address: address,
+	}
+}
+
+func main() {
+	// 使用构造函数创建和初始化结构体
+	p := NewPerson("John", 30, "New York")
+
+	fmt.Println(*p) // 输出 {John 30 New York}
+}
+```
+
+通过上述方式，我们可以实现对自定义的复杂结构体进行创建和初始化。注意，`make` 函数仅适用于内置类型（切片、映射和通道）的初始化，对于自定义结构体，我们需要使用其他方式进行初始化。
+
 ## （2）如果使用new初始化map、slice、channel会怎么样
 
 在 Go 中，使用 `new` 初始化 `map`、`slice` 和 `channel` 会得到它们的零值，并返回一个指向该类型的指针。
