@@ -1974,7 +1974,242 @@ func main() {
 
 ### （3）gin的context
 
+在 Gin 框架中，`context` 是一个非常重要的概念，代表了当前 HTTP 请求的上下文。每个请求都会创建一个 `context` 对象，用于在处理请求时传递信息、获取请求参数、设置响应状态等。
+
+`gin.Context` 是 Gin 中的 `context` 对象的具体类型，它包含了与当前请求相关的各种信息和操作方法。以下是 `gin.Context` 的一些常用功能和属性：
+
+1. **请求信息**：
+   - `c.Request`：表示当前 HTTP 请求的相关信息，例如请求头、请求体等。
+   - `c.Request.Method`：获取请求的 HTTP 方法（GET、POST、PUT、DELETE 等）。
+   - `c.Request.URL`：获取请求的 URL 信息。
+   - `c.Request.Header`：获取请求的 HTTP 头信息。
+   - `c.Request.Body`：获取请求的消息体（通常用于处理 POST 请求的数据）。
+
+2. **响应信息**：
+   - `c.Writer`：表示用于构建响应的 `http.ResponseWriter`。
+   - `c.Writer.WriteHeader(statusCode int)`：设置 HTTP 响应的状态码。
+   - `c.String(statusCode int, format string, values ...interface{})`：以字符串形式写入响应。
+
+3. **路由参数**：
+   - `c.Param(key string)`：获取路由中的参数值。
+   - `c.Params`：获取所有路由参数的键值对。
+
+4. **查询参数**：
+   - `c.DefaultQuery(key, defaultValue string)`：获取查询参数的值，如果不存在则返回默认值。
+   - `c.Query(key string)`：获取查询参数的值。
+
+5. **响应数据格式**：
+   - `c.JSON(statusCode int, obj interface{})`：以 JSON 格式返回响应。
+   - `c.XML(statusCode int, obj interface{})`：以 XML 格式返回响应。
+   - `c.HTML(statusCode int, name string, data interface{})`：以 HTML 格式返回响应。
+
+6. **中间件操作**：
+   - `c.Next()`：继续执行后续中间件或路由处理函数。
+   - `c.Abort()`：中止当前请求，不再执行后续中间件或路由处理函数。
+
+7. **错误处理**：
+   - `c.Error(err error)`：将错误信息与当前请求关联，通常用于记录错误信息或返回特定错误响应。
+
+8. **其他功能**：
+   - `c.Get(key string)` 和 `c.Set(key string, value interface{})`：用于在 `context` 中存储和检索键值对数据，可以在中间件之间传递数据。
+
+9. **上下文的终止**：
+   - `c.Abort()`：用于中止请求处理流程，不再执行后续中间件和路由处理函数。
+   - `c.AbortWithStatus(statusCode int)`：中止请求并返回指定状态码的响应。
+
+`gin.Context` 提供了丰富的方法和属性，让您能够方便地处理 HTTP 请求和构建响应。通过操作 `context`，您可以访问请求信息、处理参数、设置响应数据等，从而完成对 HTTP 请求的处理。
+
 ## 20 go语言实现UDP协议及TCP通讯
+
+在 Go 语言中，您可以使用标准库来实现 UDP 和 TCP 通信。下面我将分别演示如何实现 UDP 和 TCP 通信的基本示例。
+
+### UDP 通信示例
+
+以下是一个简单的 Go 语言程序，演示如何使用 UDP 协议进行通信。这个示例包括一个简单的 UDP 服务器和一个 UDP 客户端。
+
+#### UDP 服务器
+
+```go
+package main
+
+import (
+	"fmt"
+	"net"
+)
+
+func main() {
+	// 监听UDP端口
+	conn, err := net.ListenPacket("udp", ":8080")
+	if err != nil {
+		fmt.Println("Error:", err)
+		return
+	}
+	defer conn.Close()
+
+	fmt.Println("UDP服务器启动，等待连接...")
+
+	buf := make([]byte, 1024)
+
+	for {
+		// 读取数据
+		n, addr, err := conn.ReadFrom(buf)
+		if err != nil {
+			fmt.Println("Error:", err)
+			continue
+		}
+
+		// 打印收到的数据和客户端地址
+		fmt.Printf("Received %s from %s\n", string(buf[:n]), addr)
+
+		// 回复消息
+		reply := []byte("Hello, UDP client!")
+		_, err = conn.WriteTo(reply, addr)
+		if err != nil {
+			fmt.Println("Error:", err)
+		}
+	}
+}
+```
+
+#### UDP 客户端
+
+```go
+package main
+
+import (
+	"fmt"
+	"net"
+)
+
+func main() {
+	// 连接UDP服务器
+	conn, err := net.Dial("udp", "localhost:8080")
+	if err != nil {
+		fmt.Println("Error:", err)
+		return
+	}
+	defer conn.Close()
+
+	// 发送消息
+	message := []byte("Hello, UDP server!")
+	_, err = conn.Write(message)
+	if err != nil {
+		fmt.Println("Error:", err)
+		return
+	}
+
+	// 接收回复
+	reply := make([]byte, 1024)
+	n, err := conn.Read(reply)
+	if err != nil {
+		fmt.Println("Error:", err)
+		return
+	}
+
+	fmt.Printf("Received: %s\n", string(reply[:n]))
+}
+```
+
+### TCP 通信示例
+
+以下是一个简单的 Go 语言程序，演示如何使用 TCP 协议进行通信。这个示例包括一个简单的 TCP 服务器和一个 TCP 客户端。
+
+#### TCP 服务器
+
+```go
+package main
+
+import (
+	"fmt"
+	"net"
+)
+
+func main() {
+	// 监听TCP端口
+	listener, err := net.Listen("tcp", ":8080")
+	if err != nil {
+		fmt.Println("Error:", err)
+		return
+	}
+	defer listener.Close()
+
+	fmt.Println("TCP服务器启动，等待连接...")
+
+	for {
+		// 接受客户端连接
+		conn, err := listener.Accept()
+		if err != nil {
+			fmt.Println("Error:", err)
+			continue
+		}
+
+		// 处理客户端请求
+		go handleClient(conn)
+	}
+}
+
+func handleClient(conn net.Conn) {
+	defer conn.Close()
+
+	// 读取客户端请求
+	buf := make([]byte, 1024)
+	n, err := conn.Read(buf)
+	if err != nil {
+		fmt.Println("Error:", err)
+		return
+	}
+
+	fmt.Printf("Received: %s\n", string(buf[:n]))
+
+	// 发送响应
+	message := []byte("Hello, TCP client!")
+	_, err = conn.Write(message)
+	if err != nil {
+		fmt.Println("Error:", err)
+	}
+}
+```
+
+#### TCP 客户端
+
+```go
+package main
+
+import (
+	"fmt"
+	"net"
+)
+
+func main() {
+	// 连接TCP服务器
+	conn, err := net.Dial("tcp", "localhost:8080")
+	if err != nil {
+		fmt.Println("Error:", err)
+		return
+	}
+	defer conn.Close()
+
+	// 发送请求
+	message := []byte("Hello, TCP server!")
+	_, err = conn.Write(message)
+	if err != nil {
+		fmt.Println("Error:", err)
+		return
+	}
+
+	// 接收响应
+	reply := make([]byte, 1024)
+	n, err := conn.Read(reply)
+	if err != nil {
+		fmt.Println("Error:", err)
+		return
+	}
+
+	fmt.Printf("Received: %s\n", string(reply[:n]))
+}
+```
+
+这些示例演示了如何在 Go 中实现基本的 UDP 和 TCP 通信。UDP 用于无连接的通信，适用于快速数据传输，但不保证可靠性。TCP 用于有连接的通信，提供了可靠的、面向连接的数据传输。您可以根据具体需求扩展和改进这些示例来构建更复杂的网络应用程序。
 
 ## 21 package相关
 
